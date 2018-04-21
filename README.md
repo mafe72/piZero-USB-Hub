@@ -21,11 +21,11 @@ Designed by Eladio Martinez
 - Optional jumpers to take power from upstream connector
 - LED status indicators for each downstream port
 
-Bottom Side:
-![Bottom Side](images/top_bw.png)
+Top Side:
+![Top Side](images/top_bw.png)
 
-Top Side
-![Top Side](images/bottom_bw.png)
+Bottom Side
+![Bottom Side](images/bottom_bw.png)
 
 ### Modes of use
 
