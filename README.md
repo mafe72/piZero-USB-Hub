@@ -1,6 +1,6 @@
 ### Description
 
-A Small USB 4 port hub for the Raspberry Pi Zero
+A small 4 port USB hub for the Raspberry Pi Zero
 
 ### License
 
