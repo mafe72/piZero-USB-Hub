@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive BOM for KiCAD</title>
+  <style type="text/css">
+:root {
+  --pcb-edge-color: black;
+}
+
+html, body {
+  margin: 0px;
+  height: 100%;
+  font-family: Verdana, sans-serif;
+}
+
+.dark {
+  --pcb-edge-color: #eee;
+  background-color: #252c30;
+  color: #eee;
+}
+
+button {
+  background-color: #eee;
+  border: 1px solid #888;
+  color: black;
+  height: 44px;
+  width: 44px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bolder;
+}
+
+.dark button {
+  background-color: #c3b7b5; /* This will be inverted */
+}
+
+button.depressed {
+  background-color: #0a0;
+  color: white;
+}
+
+.dark button.depressed {
+  background-color: #b3b; /* This will be inverted */
+}
+
+button:focus {
+  outline: 0;
+}
+
+button#tb-btn {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAwBQTFRFAAAABQUFCAgICQkJCgoKEBAQFhYWFxcXGxsbHBwcISEhIyMjJCQkKSkpLS0tLi4uMTExNzc3PDw8QEBAQkJCRERERkZGSEhIT09PWlpaW1tbXFxcYGBgaWlpd3d3eXl5enp6f39/gICAgYGBgoKCi4uLjIyMkpKSk5OTlJSUlpaWl5eXmZmZnJycn5+foqKipqamr6+vtLS0uLi4v7+/w8PDyMjIy8vLz8/P1dXV19fX3Nzc5ubm6urq7+/v8fHx9fX1+Pj4////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdkhsDgAAAQB0Uk5T////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AFP3ByUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTnU1rJkAAAA/klEQVQ4T9WT21bCMBBFB0UQRAWrVEmtDYgtXlC03m8l//9PwyQZSRfSLF/dLzmr2WtyHjqAKIJKBCJgI80rSRsIIlUeUgFBTud0LS9K5YEVorXMnFDJnwWeuULpCW61QqlkJf+mQ8wDLdmYgyUmIeRKloMOB0v464lpxMHCHYozy5yF1yRJ5O23Ez5hb6ApWJhBf3BUb32UhKGep2GBPt7DtV94hgePcPN01T6ltBQ2tohHJ+zub3ZpgBMi/ZN/OSFXxTlc+DuoXssvzDs7HuHw5Hi7drcUCqlHGozwJqUcXb5TIkFMzMUPRnBMBGAzM3vKxCEHQ9ak7fauP+ICTGDKoEYZFYYAAAAASUVORK5CYII=');
+  background-position: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+button#lr-btn {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMAUExURQAAABYWFhcXFzIyMjc3Nzw8PD09PUBAQE9PT1ZWVldXV1paWlxcXGFhYWNjY2dnZ2xsbG5ubnFxcXNzc3V1dXZ2dnl5eYCAgIaGhpKSkpOTk5SUlJycnKKioqampqysrLGxsbe3t7+/v8XFxcnJydTU1NbW1tnZ2ebm5u/v7/z8/P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJTAHzkAAAEAdFJOU////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wBT9wclAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQBwYWludC5uZXQgNC4wLjE51NayZAAAAO5JREFUOE+tk9kSgjAMRatRcakbrogL4q7//30xobFUpOiD56XJ9ExzpzNRiDrwohEV1qLUAeQ0RDVUOno4JJBIZYi0ClKpM4pCGpQKYY/h3giJRYRB90jkAlheQsiXjGfEd6FJEbbcV2W45YIEIP6XoSBIAMIjSABChJySEaE8ZigRCnxmKHtBZOKXDCyEw9k8vnDvEeirz2vYU2UEmUe8BP6HxcgKEoBwhf7GCg4itMZzmHDvz3A6wI6qqgwpWEECEK5whrt/BAnXaYcqnwDQaC/pARZ0nN0IRsiJtcL6SjY14315V3Xa7sr1R3wC/SGCp4FJdscAAAAASUVORK5CYII=');
+  background-position: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+button#bom-btn {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAwBQTFRFAAAAFhYWFxcXQEBAXFxcYGBgkpKSk5OTlJSUn5+fr6+vv7+/z8/P////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQtWgtgAAAQB0Uk5T////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AFP3ByUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTnU1rJkAAAAaElEQVQ4T+3T0QqAIAwF0JlrWub/f+5NcpCIk16Fzosv4+6CjAD2JgYITpJJHIglTwiTT+U9hq6ck68D+9D5Dpg+D2hmp1mhrTpNSdNSHTSz8/9FtVAHjk+WITJhC3qpA2Er1z09f+AGC2MyfYdXtvQAAAAASUVORK5CYII=');
+  background-position: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.left-most-button {
+  border-right: 0;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.middle-button {
+  border-right: 0;
+}
+
+.right-most-button {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.button-container {
+  font-size: 0;
+}
+
+.dark .button-container {
+  filter: invert(1);
+}
+
+@media print {
+  .hideonprint {
+    display: none;
+  }
+}
+
+canvas {
+  cursor: crosshair;
+}
+
+canvas:active {
+  cursor: grabbing;
+}
+
+.fileinfo {
+  width: 100%;
+  max-width: 1000px;
+  border: none;
+  padding: 5px;
+}
+
+.fileinfo .title {
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+.fileinfo td {
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 1px;
+  width: 50%;
+  text-overflow: ellipsis;
+}
+
+.bom {
+  border-collapse: collapse;
+  font-family: Consolas, "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 10pt;
+  table-layout: fixed;
+  width: 100%;
+  margin-top: 1px;
+}
+
+.bom th, .bom td {
+  border: 1px solid black;
+  padding: 5px;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.dark .bom th, .dark .bom td {
+  border: 1px solid #777;
+}
+
+.bom th {
+  background-color: #CCCCCC;
+}
+
+.dark .bom th {
+  background-color: #3b4749;
+}
+
+.bom tr.highlighted:nth-child(n) {
+  background-color: #cfc;
+}
+
+.dark .bom tr.highlighted:nth-child(n) {
+  background-color: #226022;
+}
+
+.bom tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.dark .bom tr:nth-child(even) {
+  background-color: #313b40;
+}
+
+.bom tr {
+  transition: background-color 0.2s;
+}
+
+.bom .numCol {
+  width: 25px;
+}
+
+.bom .bom-checkbox {
+  width: 30px;
+}
+
+.bom .Description {
+  width: 10%;
+}
+
+.bom .Part {
+  width: 10%;
+}
+
+.bom .Value {
+  width: 15%;
+}
+
+.bom .Quantity {
+  width: 65px;
+}
+
+.split {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.split.split-horizontal, .gutter.gutter-horizontal {
+  height: 100%;
+  float: left;
+}
+
+.gutter {
+  background-color: #ddd;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transition: background-color 0.3s;
+}
+
+.dark .gutter {
+  background-color: #777;
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: ew-resize;
+  width: 5px;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: ns-resize;
+  height: 5px;
+}
+
+.searchbox {
+  float: left;
+  height: 40px;
+  margin: 10px 5px;
+  padding: 12px 32px;
+  font-family: Consolas, "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 18px;
+  box-sizing: border-box;
+  border: 1px solid #888;
+  border-radius: 6px;
+  outline: none;
+  background-color: #eee;
+  transition: background-color 0.2s, border 0.2s;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNklEQVQ4T8XSMUvDQBQH8P/LElFa/AIZHcTBQSz0I/gFstTBRR2KUC4ldDxw7h0Bl3RRUATxi4iiODgoiLNrbQYp5J6cpJJqomkX33Z37/14d/dIa33MzDuYI4johOI4XhyNRteO46zNYjDzAxE1yBZprVeZ+QbAUhXEGJMA2Ox2u4+fQIa0mPmsCgCgJYQ4t7lfgF0opQYAdv9ABkKI/UnOFCClXKjX61cA1osQY8x9kiRNKeV7IWA3oyhaSdP0FkAtjxhj3hzH2RBCPOf3pzqYHCilfAAX+URm9oMguPzeWSGQvUcMYC8rOBJCHBRdqxTo9/vbRHRqi8bj8XKv1xvODbiuW2u32/bvf0SlDv4XYOY7z/Mavu+nM1+BmQ+NMc0wDF/LprP0DbTWW0T00ul0nn4b7Q87+X4Qmfiq2wAAAABJRU5ErkJggg==');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+}
+
+.dark .searchbox {
+  background-color: #111;
+  color: #eee;
+}
+
+.searchbox::placeholder {
+  color: #ccc;
+}
+
+.dark .searchbox::placeholder {
+  color: #666;
+}
+
+.filter {
+  width: calc(60% - 10px);
+}
+
+.reflookup {
+  width: calc(40% - 10px);
+}
+
+input[type=text]:focus {
+  background-color: white;
+  border: 1px solid #333;
+}
+
+.dark input[type=text]:focus {
+  background-color: #333;
+  border: 1px solid #ccc;
+}
+
+mark.highlight {
+  background-color: #5050ff;
+  color: #fff;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.dark mark.highlight {
+  background-color: #76a6da;
+  color: #111;
+}
+
+.menubtn {
+  background-color: white;
+  font-size: 16px;
+  border: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 20 20'%3E%3Cpath fill='none' d='M0 0h20v20H0V0z'/%3E%3Cpath d='M15.95 10.78c.03-.25.05-.51.05-.78s-.02-.53-.06-.78l1.69-1.32c.15-.12.19-.34.1-.51l-1.6-2.77c-.1-.18-.31-.24-.49-.18l-1.99.8c-.42-.32-.86-.58-1.35-.78L12 2.34c-.03-.2-.2-.34-.4-.34H8.4c-.2 0-.36.14-.39.34l-.3 2.12c-.49.2-.94.47-1.35.78l-1.99-.8c-.18-.07-.39 0-.49.18l-1.6 2.77c-.1.18-.06.39.1.51l1.69 1.32c-.04.25-.07.52-.07.78s.02.53.06.78L2.37 12.1c-.15.12-.19.34-.1.51l1.6 2.77c.1.18.31.24.49.18l1.99-.8c.42.32.86.58 1.35.78l.3 2.12c.04.2.2.34.4.34h3.2c.2 0 .37-.14.39-.34l.3-2.12c.49-.2.94-.47 1.35-.78l1.99.8c.18.07.39 0 .49-.18l1.6-2.77c.1-.18.06-.39-.1-.51l-1.67-1.32zM10 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z'/%3E%3C/svg%3E%0A");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dark .menubtn {
+  filter: invert(1);
+}
+
+.menu {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  right: 0;
+  min-width: 300px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  padding: 8px;
+}
+
+.dark .menu-content {
+  background-color: #111;
+}
+
+.menu:hover .menu-content {
+  display: block;
+}
+
+.menu:hover .menubtn {
+  background-color: #eee;
+}
+
+.dark .menu:hover .menubtn {
+}
+
+.menu-label {
+  display: inline-block;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-top: 0;
+  width: calc(100% - 18px);
+}
+
+.menu-label-top {
+  border-top: 1px solid #ccc;
+}
+
+.menu-textbox {
+  float: left;
+  height: 24px;
+  margin: 10px 5px;
+  padding: 5px 5px;
+  font-family: Consolas, "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 14px;
+  box-sizing: border-box;
+  border: 1px solid #888;
+  border-radius: 4px;
+  outline: none;
+  background-color: #eee;
+  transition: background-color 0.2s, border 0.2s;
+  width: calc(100% - 10px);
+}
+
+.dark .menu-textbox {
+  background-color: #222;
+  color: #eee;
+}
+
+#topmostdiv {
+  transition: background-color 0.3s;
+}
+
+#top {
+  height: 78px;
+  border-bottom: 2px solid black;
+}
+
+.dark #top {
+  border-bottom: 2px solid #ccc;
+}
+
+#dbg {
+  display: block;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #aaa;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+  </style>
+  <script type="text/javascript" >
+///////////////////////////////////////////////
+/*
+  Split.js - v1.3.5
+  MIT License
+  https://github.com/nathancahill/Split.js
+*/
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):e.Split=t()}(this,function(){"use strict";var e=window,t=e.document,n="addEventListener",i="removeEventListener",r="getBoundingClientRect",s=function(){return!1},o=e.attachEvent&&!e[n],a=["","-webkit-","-moz-","-o-"].filter(function(e){var n=t.createElement("div");return n.style.cssText="width:"+e+"calc(9px)",!!n.style.length}).shift()+"calc",l=function(e){return"string"==typeof e||e instanceof String?t.querySelector(e):e};return function(u,c){function z(e,t,n){var i=A(y,t,n);Object.keys(i).forEach(function(t){return e.style[t]=i[t]})}function h(e,t){var n=B(y,t);Object.keys(n).forEach(function(t){return e.style[t]=n[t]})}function f(e){var t=E[this.a],n=E[this.b],i=t.size+n.size;t.size=e/this.size*i,n.size=i-e/this.size*i,z(t.element,t.size,this.aGutterSize),z(n.element,n.size,this.bGutterSize)}function m(e){var t;this.dragging&&((t="touches"in e?e.touches[0][b]-this.start:e[b]-this.start)<=E[this.a].minSize+M+this.aGutterSize?t=E[this.a].minSize+this.aGutterSize:t>=this.size-(E[this.b].minSize+M+this.bGutterSize)&&(t=this.size-(E[this.b].minSize+this.bGutterSize)),f.call(this,t),c.onDrag&&c.onDrag())}function g(){var e=E[this.a].element,t=E[this.b].element;this.size=e[r]()[y]+t[r]()[y]+this.aGutterSize+this.bGutterSize,this.start=e[r]()[G]}function d(){var t=this,n=E[t.a].element,r=E[t.b].element;t.dragging&&c.onDragEnd&&c.onDragEnd(),t.dragging=!1,e[i]("mouseup",t.stop),e[i]("touchend",t.stop),e[i]("touchcancel",t.stop),t.parent[i]("mousemove",t.move),t.parent[i]("touchmove",t.move),delete t.stop,delete t.move,n[i]("selectstart",s),n[i]("dragstart",s),r[i]("selectstart",s),r[i]("dragstart",s),n.style.userSelect="",n.style.webkitUserSelect="",n.style.MozUserSelect="",n.style.pointerEvents="",r.style.userSelect="",r.style.webkitUserSelect="",r.style.MozUserSelect="",r.style.pointerEvents="",t.gutter.style.cursor="",t.parent.style.cursor=""}function S(t){var i=this,r=E[i.a].element,o=E[i.b].element;!i.dragging&&c.onDragStart&&c.onDragStart(),t.preventDefault(),i.dragging=!0,i.move=m.bind(i),i.stop=d.bind(i),e[n]("mouseup",i.stop),e[n]("touchend",i.stop),e[n]("touchcancel",i.stop),i.parent[n]("mousemove",i.move),i.parent[n]("touchmove",i.move),r[n]("selectstart",s),r[n]("dragstart",s),o[n]("selectstart",s),o[n]("dragstart",s),r.style.userSelect="none",r.style.webkitUserSelect="none",r.style.MozUserSelect="none",r.style.pointerEvents="none",o.style.userSelect="none",o.style.webkitUserSelect="none",o.style.MozUserSelect="none",o.style.pointerEvents="none",i.gutter.style.cursor=j,i.parent.style.cursor=j,g.call(i)}function v(e){e.forEach(function(t,n){if(n>0){var i=F[n-1],r=E[i.a],s=E[i.b];r.size=e[n-1],s.size=t,z(r.element,r.size,i.aGutterSize),z(s.element,s.size,i.bGutterSize)}})}function p(){F.forEach(function(e){e.parent.removeChild(e.gutter),E[e.a].element.style[y]="",E[e.b].element.style[y]=""})}void 0===c&&(c={});var y,b,G,E,w=l(u[0]).parentNode,D=e.getComputedStyle(w).flexDirection,U=c.sizes||u.map(function(){return 100/u.length}),k=void 0!==c.minSize?c.minSize:100,x=Array.isArray(k)?k:u.map(function(){return k}),L=void 0!==c.gutterSize?c.gutterSize:10,M=void 0!==c.snapOffset?c.snapOffset:30,O=c.direction||"horizontal",j=c.cursor||("horizontal"===O?"ew-resize":"ns-resize"),C=c.gutter||function(e,n){var i=t.createElement("div");return i.className="gutter gutter-"+n,i},A=c.elementStyle||function(e,t,n){var i={};return"string"==typeof t||t instanceof String?i[e]=t:i[e]=o?t+"%":a+"("+t+"% - "+n+"px)",i},B=c.gutterStyle||function(e,t){return n={},n[e]=t+"px",n;var n};"horizontal"===O?(y="width","clientWidth",b="clientX",G="left","paddingLeft"):"vertical"===O&&(y="height","clientHeight",b="clientY",G="top","paddingTop");var F=[];return E=u.map(function(e,t){var i,s={element:l(e),size:U[t],minSize:x[t]};if(t>0&&(i={a:t-1,b:t,dragging:!1,isFirst:1===t,isLast:t===u.length-1,direction:O,parent:w},i.aGutterSize=L,i.bGutterSize=L,i.isFirst&&(i.aGutterSize=L/2),i.isLast&&(i.bGutterSize=L/2),"row-reverse"===D||"column-reverse"===D)){var a=i.a;i.a=i.b,i.b=a}if(!o&&t>0){var c=C(t,O);h(c,L),c[n]("mousedown",S.bind(i)),c[n]("touchstart",S.bind(i)),w.insertBefore(c,s.element),i.gutter=c}0===t||t===u.length-1?z(s.element,s.size,L/2):z(s.element,s.size,L);var f=s.element[r]()[y];return f<s.minSize&&(s.minSize=f),t>0&&F.push(i),s}),o?{setSizes:v,destroy:p}:{setSizes:v,getSizes:function(){return E.map(function(e){return e.size})},collapse:function(e){if(e===F.length){var t=F[e-1];g.call(t),o||f.call(t,t.size-t.bGutterSize)}else{var n=F[e];g.call(n),o||f.call(n,n.aGutterSize)}},destroy:p}}});
+
+///////////////////////////////////////////////
+
+///////////////////////////////////////////////
+var pcbdata = {"modules": {"G***": {"layer": "B", "center": [161.2646, 103.6066], "pads": [], "drawings": [], "ref": "G***", "bbox": {"pos": [156.69438, 100.14635799999999], "size": [9.153531, 6.93776]}}, "GND": {"layer": "F", "center": [110.49, 99.1514], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [110.49, 99.1514], "drillsize": [1.0, 1.0], "shape": "rect", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.7, 1.7]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [113.03, 99.1514], "drillsize": [1.0, 1.0], "shape": "oval", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.7, 1.7]}], "drawings": [], "ref": "GND", "bbox": {"pos": [108.664999, 97.326399], "size": [6.200002, 3.6500019999999997]}}, "OTG": {"layer": "F", "center": [171.021, 97.5385], "pads": [{"layers": ["F", "B"], "angle": -180.0, "pos": [171.021, 97.5385], "drillsize": [1.0, 1.0], "shape": "rect", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.7, 1.7]}, {"layers": ["F", "B"], "angle": -180.0, "pos": [171.021, 94.99849999999999], "drillsize": [1.0, 1.0], "shape": "oval", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.7, 1.7]}, {"layers": ["F", "B"], "angle": -180.0, "pos": [171.021, 92.4585], "drillsize": [1.0, 1.0], "shape": "oval", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.7, 1.7]}, {"layers": ["F", "B"], "angle": -180.0, "pos": [171.021, 89.9185], "drillsize": [1.0, 1.0], "shape": "oval", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.7, 1.7]}], "drawings": [], "ref": "OTG", "bbox": {"pos": [169.195999, 88.11349899999999], "size": [3.6500019999999997, 11.250002]}}, "5v_IN": {"layer": "F", "center": [110.49799999999999, 101.93299999999999], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [110.49799999999999, 101.93299999999999], "drillsize": [1.0, 1.0], "shape": "rect", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.7, 1.7]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [113.038, 101.93299999999999], "drillsize": [1.0, 1.0], "shape": "oval", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.7, 1.7]}], "drawings": [], "ref": "5v_IN", "bbox": {"pos": [108.67299899999999, 100.10799899999999], "size": [6.200002, 3.6500019999999997]}}, "C3": {"layer": "F", "center": [142.326, 107.711], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [143.326, 107.711], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -180.0, "pos": [141.326, 107.711], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C3", "bbox": {"pos": [140.550999, 106.80099899999999], "size": [3.5500019999999997, 1.820002]}}, "C2": {"layer": "F", "center": [135.636, 107.747], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [134.636, 107.747], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -0.0, "pos": [136.636, 107.747], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C2", "bbox": {"pos": [133.860999, 106.83699899999999], "size": [3.5500019999999997, 1.820002]}}, "IC1": {"layer": "F", "center": [135.75799999999998, 100.178], "pads": [{"layers": ["F"], "angle": -270.0, "pos": [138.47, 104.338], "shape": "rect", "pin1": true, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 103.698], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 103.05799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 102.41799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 101.77799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 101.13799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 100.49799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 99.85799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 99.21799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 98.57799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 97.938], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 97.298], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 96.658], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [138.47, 96.018], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 96.018], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 96.658], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 97.298], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 97.938], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 98.57799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 99.21799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 99.85799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 100.49799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 101.13799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 101.77799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 102.41799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 103.05799999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 103.698], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}, {"layers": ["F"], "angle": -270.0, "pos": [133.046, 104.338], "shape": "rect", "pin1": false, "type": "smd", "size": [0.44, 1.525]}], "drawings": [], "ref": "IC1", "bbox": {"pos": [132.00799899999998, 94.902999], "size": [7.500001999999999, 10.550002]}}, "C6": {"layer": "F", "center": [129.159, 107.78699999999999], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [130.159, 107.78699999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -180.0, "pos": [128.159, 107.78699999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C6", "bbox": {"pos": [127.38399899999999, 106.876999], "size": [3.5500019999999997, 1.820002]}}, "C5": {"layer": "F", "center": [129.2, 103.09899999999999], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [130.2, 103.09899999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -180.0, "pos": [128.2, 103.09899999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C5", "bbox": {"pos": [127.424999, 102.188999], "size": [3.5500019999999997, 1.820002]}}, "C4": {"layer": "F", "center": [142.189, 99.3851], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [141.189, 99.3851], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -0.0, "pos": [143.189, 99.3851], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C4", "bbox": {"pos": [140.413999, 98.475099], "size": [3.5500019999999997, 1.820002]}}, "R4": {"layer": "F", "center": [121.16799999999999, 95.5243], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [120.21799999999999, 95.5243], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -0.0, "pos": [122.118, 95.5243], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R4", "bbox": {"pos": [119.59299899999999, 94.584299], "size": [3.1500019999999997, 1.880002]}}, "R5": {"layer": "F", "center": [129.13899999999998, 99.4105], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [130.089, 99.4105], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -180.0, "pos": [128.189, 99.4105], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R5", "bbox": {"pos": [127.563999, 98.47049899999999], "size": [3.1500019999999997, 1.880002]}}, "R6": {"layer": "F", "center": [117.06899999999999, 95.5294], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [116.119, 95.5294], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -0.0, "pos": [118.01899999999999, 95.5294], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R6", "bbox": {"pos": [115.49399899999999, 94.589399], "size": [3.1500019999999997, 1.880002]}}, "R1": {"layer": "F", "center": [142.281, 95.5243], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [141.331, 95.5243], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -0.0, "pos": [143.231, 95.5243], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R1", "bbox": {"pos": [140.705999, 94.584299], "size": [3.1500019999999997, 1.880002]}}, "R2": {"layer": "F", "center": [129.195, 95.5294], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [130.14499999999998, 95.5294], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -180.0, "pos": [128.245, 95.5294], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R2", "bbox": {"pos": [127.61999899999999, 94.589399], "size": [3.1500019999999997, 1.880002]}}, "R3": {"layer": "F", "center": [125.11, 95.5243], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [124.16, 95.5243], "shape": "rect", "pin1": true, "type": "smd", "size": [0.7, 1.3]}, {"layers": ["F"], "angle": -0.0, "pos": [126.05999999999999, 95.5243], "shape": "rect", "pin1": false, "type": "smd", "size": [0.7, 1.3]}], "drawings": [], "ref": "R3", "bbox": {"pos": [123.534999, 94.584299], "size": [3.1500019999999997, 1.880002]}}, "MH-4": {"layer": "F", "center": [111.907, 106.116], "pads": [{"layers": ["F", "B"], "angle": -0.0, "pos": [111.907, 106.116], "drillsize": [3.1999999999999997, 3.1999999999999997], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [3.1999999999999997, 3.1999999999999997]}], "drawings": [], "ref": "MH-4", "bbox": {"pos": [108.43199899999999, 102.640999], "size": [6.950002, 6.950002]}}, "MH-1": {"layer": "F", "center": [170.21599999999998, 106.14699999999999], "pads": [{"layers": ["F", "B"], "angle": -0.0, "pos": [170.21599999999998, 106.14699999999999], "drillsize": [3.1999999999999997, 3.1999999999999997], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [3.1999999999999997, 3.1999999999999997]}], "drawings": [], "ref": "MH-1", "bbox": {"pos": [166.740999, 102.671999], "size": [6.950002, 6.950002]}}, "MH-2": {"layer": "F", "center": [170.21599999999998, 82.8446], "pads": [{"layers": ["F", "B"], "angle": -0.0, "pos": [170.21599999999998, 82.8446], "drillsize": [3.1999999999999997, 3.1999999999999997], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [3.1999999999999997, 3.1999999999999997]}], "drawings": [], "ref": "MH-2", "bbox": {"pos": [166.740999, 79.369599], "size": [6.950002, 6.950002]}}, "MH-3": {"layer": "F", "center": [111.917, 82.83959999999999], "pads": [{"layers": ["F", "B"], "angle": -0.0, "pos": [111.917, 82.83959999999999], "drillsize": [3.1999999999999997, 3.1999999999999997], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [3.1999999999999997, 3.1999999999999997]}], "drawings": [], "ref": "MH-3", "bbox": {"pos": [108.441999, 79.364599], "size": [6.950002, 6.950002]}}, "C1": {"layer": "F", "center": [142.189, 103.09899999999999], "pads": [{"layers": ["F"], "angle": -0.0, "pos": [141.189, 103.09899999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.0, 1.25]}, {"layers": ["F"], "angle": -0.0, "pos": [143.189, 103.09899999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [1.0, 1.25]}], "drawings": [], "ref": "C1", "bbox": {"pos": [140.413999, 102.188999], "size": [3.5500019999999997, 1.820002]}}, "J4": {"layer": "F", "center": [156.70499999999998, 96.1771], "pads": [{"layers": ["F", "B"], "angle": -270.0, "pos": [163.815, 96.1771], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [161.275, 96.1771], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [159.245, 96.1771], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [156.70499999999998, 96.1771], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [166.86499999999998, 98.8471], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [153.14499999999998, 98.8471], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}], "drawings": [], "ref": "J4", "bbox": {"pos": [151.379999, 94.752099], "size": [17.300002, 14.650001999999999]}}, "J5": {"layer": "F", "center": [119.695, 99.2988], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [119.695, 99.2988], "drillsize": [1.0, 3.0], "shape": "rect", "drillshape": "oblong", "pin1": true, "type": "th", "size": [3.5, 3.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [119.695, 105.2988], "drillsize": [1.0, 3.0], "shape": "rect", "drillshape": "oblong", "pin1": false, "type": "th", "size": [3.5, 3.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [124.395, 102.2988], "drillsize": [3.0, 1.0], "shape": "rect", "drillshape": "oblong", "pin1": false, "type": "th", "size": [3.5, 3.5]}], "drawings": [], "ref": "J5", "bbox": {"pos": [114.91999899999999, 97.273799], "size": [11.550002, 16.050002]}}, "J7": {"layer": "F", "center": [112.756, 89.347], "pads": [{"layers": ["F"], "angle": -270.0, "pos": [110.056, 90.347], "shape": "rect", "pin1": false, "type": "smd", "size": [1.5, 1.9]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [112.756, 86.847], "drillsize": [0.85, 0.85], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.45, 1.45]}, {"layers": ["F"], "angle": -270.0, "pos": [112.756, 88.697], "shape": "rect", "pin1": false, "type": "smd", "size": [0.39999999999999997, 1.3499999999999999]}, {"layers": ["F"], "angle": -270.0, "pos": [112.756, 88.047], "shape": "rect", "pin1": true, "type": "smd", "size": [0.39999999999999997, 1.3499999999999999]}, {"layers": ["F"], "angle": -270.0, "pos": [112.756, 90.64699999999999], "shape": "rect", "pin1": false, "type": "smd", "size": [0.39999999999999997, 1.3499999999999999]}, {"layers": ["F"], "angle": -270.0, "pos": [112.756, 89.997], "shape": "rect", "pin1": false, "type": "smd", "size": [0.39999999999999997, 1.3499999999999999]}, {"layers": ["F"], "angle": -270.0, "pos": [112.756, 89.347], "shape": "rect", "pin1": false, "type": "smd", "size": [0.39999999999999997, 1.3499999999999999]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [112.756, 91.847], "drillsize": [0.85, 0.85], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.45, 1.45]}, {"layers": ["F"], "angle": -270.0, "pos": [110.056, 88.347], "shape": "rect", "pin1": false, "type": "smd", "size": [1.5, 1.9]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [110.056, 85.847], "drillsize": [0.6, 1.3], "shape": "oval", "drillshape": "oblong", "pin1": false, "type": "th", "size": [1.2, 1.9]}, {"layers": ["F", "B"], "angle": -270.0, "pos": [110.056, 92.847], "drillsize": [0.6, 1.3], "shape": "oval", "drillshape": "oblong", "pin1": false, "type": "th", "size": [1.2, 1.9]}, {"layers": ["F"], "angle": -270.0, "pos": [110.056, 92.247], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.9]}, {"layers": ["F"], "angle": -270.0, "pos": [110.056, 86.447], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.9]}], "drawings": [], "ref": "J7", "bbox": {"pos": [107.854295, 84.921999], "size": [6.161706, 9.250002]}}, "J1": {"layer": "F", "center": [127.10199999999999, 92.7354], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [119.99199999999999, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [122.532, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [124.562, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [127.10199999999999, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [116.942, 90.0654], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [130.662, 90.0654], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}], "drawings": [], "ref": "J1", "bbox": {"pos": [115.126999, 79.51039899999999], "size": [17.300002, 14.650001999999999]}}, "J2": {"layer": "F", "center": [145.374, 92.7354], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [138.26399999999998, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [140.804, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [142.834, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [145.374, 92.7354], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [135.214, 90.0654], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [148.934, 90.0654], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}], "drawings": [], "ref": "J2", "bbox": {"pos": [133.398999, 79.51039899999999], "size": [17.300002, 14.650001999999999]}}, "J3": {"layer": "F", "center": [163.815, 92.67949999999999], "pads": [{"layers": ["F", "B"], "angle": -90.0, "pos": [156.70499999999998, 92.67949999999999], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [159.245, 92.67949999999999], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [161.275, 92.67949999999999], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [163.815, 92.67949999999999], "drillsize": [1.0, 1.0], "shape": "circle", "drillshape": "circle", "pin1": true, "type": "th", "size": [1.5, 1.5]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [153.655, 90.0095], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}, {"layers": ["F", "B"], "angle": -90.0, "pos": [167.375, 90.0095], "drillsize": [2.3, 2.3], "shape": "circle", "drillshape": "circle", "pin1": false, "type": "th", "size": [3.0, 3.0]}], "drawings": [], "ref": "J3", "bbox": {"pos": [151.839999, 79.454499], "size": [17.300002, 14.650001999999999]}}, "Y1": {"layer": "F", "center": [147.411, 101.285], "pads": [{"layers": ["F"], "angle": -90.0, "pos": [147.411, 105.535], "shape": "rect", "pin1": true, "type": "smd", "size": [4.5, 2.0]}, {"layers": ["F"], "angle": -90.0, "pos": [147.411, 97.035], "shape": "rect", "pin1": false, "type": "smd", "size": [4.5, 2.0]}], "drawings": [], "ref": "Y1", "bbox": {"pos": [144.785999, 94.459999], "size": [5.250001999999999, 13.650001999999999]}}, "D4": {"layer": "F", "center": [133.182, 81.7372], "pads": [{"layers": ["F"], "angle": -90.0, "pos": [133.182, 82.8372], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.2]}, {"layers": ["F"], "angle": -90.0, "pos": [133.182, 80.63719999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.2, 1.2]}], "drawings": [], "ref": "D4", "bbox": {"pos": [132.306999, 79.762199], "size": [1.7500019999999998, 3.950002]}}, "D5": {"layer": "F", "center": [151.65099999999998, 107.252], "pads": [{"layers": ["F"], "angle": -270.0, "pos": [151.65099999999998, 106.152], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.2]}, {"layers": ["F"], "angle": -270.0, "pos": [151.65099999999998, 108.35199999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.2, 1.2]}], "drawings": [], "ref": "D5", "bbox": {"pos": [150.77599899999998, 105.27699899999999], "size": [1.7500019999999998, 3.950002]}}, "D2": {"layer": "F", "center": [114.859, 81.7016], "pads": [{"layers": ["F"], "angle": -90.0, "pos": [114.859, 82.8016], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.2]}, {"layers": ["F"], "angle": -90.0, "pos": [114.859, 80.60159999999999], "shape": "rect", "pin1": true, "type": "smd", "size": [1.2, 1.2]}], "drawings": [], "ref": "D2", "bbox": {"pos": [113.983999, 79.726599], "size": [1.7500019999999998, 3.950002]}}, "D3": {"layer": "F", "center": [151.643, 81.6559], "pads": [{"layers": ["F"], "angle": -90.0, "pos": [151.643, 82.7559], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.2]}, {"layers": ["F"], "angle": -90.0, "pos": [151.643, 80.5559], "shape": "rect", "pin1": true, "type": "smd", "size": [1.2, 1.2]}], "drawings": [], "ref": "D3", "bbox": {"pos": [150.767999, 79.680899], "size": [1.7500019999999998, 3.950002]}}, "D1": {"layer": "F", "center": [112.39, 95.0976], "pads": [{"layers": ["F"], "angle": -180.0, "pos": [113.49, 95.0976], "shape": "rect", "pin1": false, "type": "smd", "size": [1.2, 1.2]}, {"layers": ["F"], "angle": -180.0, "pos": [111.28999999999999, 95.0976], "shape": "rect", "pin1": true, "type": "smd", "size": [1.2, 1.2]}], "drawings": [], "ref": "D1", "bbox": {"pos": [110.414999, 94.222599], "size": [3.950002, 1.7500019999999998]}}}, "edges": [{"start": [173.491028, 107.991203], "end": [173.43858899999998, 108.15764499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.56270599999999, 109.473039], "end": [110.38821899999999, 109.465497], "type": "segment", "width": 0.09999999999999999}, {"start": [110.56270599999999, 109.473039], "end": [171.90641499999998, 109.44360499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.55959999999999, 79.47399999999999], "end": [171.5596, 79.47399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.40443199999999, 109.286552], "end": [172.243213, 109.35334399999999], "type": "segment", "width": 0.09999999999999999}, {"start": [173.091341, 108.759345], "end": [172.97346399999998, 108.88802299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.5596, 79.74194899999999], "end": [172.706753, 79.835696], "type": "segment", "width": 0.09999999999999999}, {"start": [109.55959999999999, 79.74194899999999], "end": [109.412447, 79.835696], "type": "segment", "width": 0.09999999999999999}, {"start": [173.37221599999998, 80.62876299999999], "end": [173.438985, 80.78996], "type": "segment", "width": 0.09999999999999999}, {"start": [108.922905, 108.619424], "end": [108.82914099999999, 108.472078], "type": "segment", "width": 0.09999999999999999}, {"start": [172.706753, 79.835696], "end": [172.84517499999998, 79.94191099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.243213, 109.35334399999999], "end": [172.076785, 109.405828], "type": "segment", "width": 0.09999999999999999}, {"start": [172.973814, 80.059786], "end": [173.091689, 80.188425], "type": "segment", "width": 0.09999999999999999}, {"start": [108.921296, 80.326847], "end": [108.82754899999999, 80.47399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [173.197904, 80.326847], "end": [173.291651, 80.47399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [108.82914099999999, 108.472078], "end": [108.748589, 108.31711399999999], "type": "segment", "width": 0.09999999999999999}, {"start": [173.291651, 80.47399999999999], "end": [173.37221599999998, 80.62876299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.076785, 109.405828], "end": [171.90641499999998, 109.44360499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.404837, 79.661384], "end": [172.5596, 79.74194899999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.84517499999998, 79.94191099999999], "end": [172.973814, 80.059786], "type": "segment", "width": 0.09999999999999999}, {"start": [108.627748, 80.956362], "end": [108.589984, 81.12670399999999], "type": "segment", "width": 0.09999999999999999}, {"start": [108.68186399999999, 108.15571299999999], "end": [108.629474, 107.98910599999999], "type": "segment", "width": 0.09999999999999999}, {"start": [109.274025, 79.94191099999999], "end": [109.145386, 80.059786], "type": "segment", "width": 0.09999999999999999}, {"start": [108.82754899999999, 80.47399999999999], "end": [108.746984, 80.62876299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.044535, 109.40500499999999], "end": [109.87795899999999, 109.35251699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [108.748589, 108.31711399999999], "end": [108.68186399999999, 108.15571299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [173.438985, 80.78996], "end": [173.49145199999998, 80.956362], "type": "segment", "width": 0.09999999999999999}, {"start": [173.55906, 107.47345999999999], "end": [173.551989, 81.299689], "type": "segment", "width": 0.09999999999999999}, {"start": [173.52875899999998, 107.82082299999999], "end": [173.491028, 107.991203], "type": "segment", "width": 0.09999999999999999}, {"start": [171.733911, 79.481611], "end": [171.906896, 79.504384], "type": "segment", "width": 0.09999999999999999}, {"start": [173.55906, 107.47345999999999], "end": [173.551493, 107.647803], "type": "segment", "width": 0.09999999999999999}, {"start": [172.077238, 79.542148], "end": [172.24364, 79.59461499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [172.844819, 109.005935], "end": [172.70638499999998, 109.112184], "type": "segment", "width": 0.09999999999999999}, {"start": [172.70638499999998, 109.112184], "end": [172.559216, 109.205961], "type": "segment", "width": 0.09999999999999999}, {"start": [110.38821899999999, 109.465497], "end": [110.21505499999999, 109.44276099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.385289, 79.481611], "end": [110.21230399999999, 79.504384], "type": "segment", "width": 0.09999999999999999}, {"start": [108.589984, 81.12670399999999], "end": [108.591819, 107.818564], "type": "segment", "width": 0.09999999999999999}, {"start": [109.275849, 109.004858], "end": [109.147114, 108.886834], "type": "segment", "width": 0.09999999999999999}, {"start": [171.906896, 79.504384], "end": [172.077238, 79.542148], "type": "segment", "width": 0.09999999999999999}, {"start": [173.551493, 107.647803], "end": [173.52875899999998, 107.82082299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [109.02916599999999, 108.758029], "end": [108.922905, 108.619424], "type": "segment", "width": 0.09999999999999999}, {"start": [171.5596, 79.47399999999999], "end": [171.733911, 79.481611], "type": "segment", "width": 0.09999999999999999}, {"start": [109.147114, 108.886834], "end": [109.02916599999999, 108.758029], "type": "segment", "width": 0.09999999999999999}, {"start": [173.49145199999998, 80.956362], "end": [173.551989, 81.299689], "type": "segment", "width": 0.09999999999999999}, {"start": [172.97346399999998, 108.88802299999999], "end": [172.844819, 109.005935], "type": "segment", "width": 0.09999999999999999}, {"start": [173.197553, 108.620882], "end": [173.091341, 108.759345], "type": "segment", "width": 0.09999999999999999}, {"start": [173.43858899999998, 108.15764499999999], "end": [173.37184, 108.318883], "type": "segment", "width": 0.09999999999999999}, {"start": [109.87795899999999, 109.35251699999999], "end": [109.71659799999999, 109.285696], "type": "segment", "width": 0.09999999999999999}, {"start": [173.37184, 108.318883], "end": [173.291291, 108.473688], "type": "segment", "width": 0.09999999999999999}, {"start": [108.68021499999999, 80.78996], "end": [108.627748, 80.956362], "type": "segment", "width": 0.09999999999999999}, {"start": [110.55959999999999, 79.47399999999999], "end": [110.385289, 79.481611], "type": "segment", "width": 0.09999999999999999}, {"start": [108.746984, 80.62876299999999], "end": [108.68021499999999, 80.78996], "type": "segment", "width": 0.09999999999999999}, {"start": [172.24364, 79.59461499999999], "end": [172.404837, 79.661384], "type": "segment", "width": 0.09999999999999999}, {"start": [109.02751099999999, 80.188425], "end": [108.921296, 80.326847], "type": "segment", "width": 0.09999999999999999}, {"start": [108.629474, 107.98910599999999], "end": [108.591819, 107.818564], "type": "segment", "width": 0.09999999999999999}, {"start": [173.091689, 80.188425], "end": [173.197904, 80.326847], "type": "segment", "width": 0.09999999999999999}, {"start": [110.041962, 79.542148], "end": [109.87556, 79.59461499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [109.414391, 109.111201], "end": [109.275849, 109.004858], "type": "segment", "width": 0.09999999999999999}, {"start": [172.559216, 109.205961], "end": [172.40443199999999, 109.286552], "type": "segment", "width": 0.09999999999999999}, {"start": [109.145386, 80.059786], "end": [109.02751099999999, 80.188425], "type": "segment", "width": 0.09999999999999999}, {"start": [173.291291, 108.473688], "end": [173.197553, 108.620882], "type": "segment", "width": 0.09999999999999999}, {"start": [110.21230399999999, 79.504384], "end": [110.041962, 79.542148], "type": "segment", "width": 0.09999999999999999}, {"start": [171.320415, 82.526358], "end": [171.20552899999998, 82.249], "type": "segment", "width": 0.09999999999999999}, {"start": [169.213671, 82.249], "end": [169.098785, 82.526358], "type": "segment", "width": 0.09999999999999999}, {"start": [170.2096, 81.67399999999999], "end": [169.911958, 81.713185], "type": "segment", "width": 0.09999999999999999}, {"start": [169.396427, 82.01082699999999], "end": [169.213671, 82.249], "type": "segment", "width": 0.09999999999999999}, {"start": [171.022773, 82.01082699999999], "end": [170.78459999999998, 81.828071], "type": "segment", "width": 0.09999999999999999}, {"start": [169.6346, 81.828071], "end": [169.396427, 82.01082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.911958, 81.713185], "end": [169.6346, 81.828071], "type": "segment", "width": 0.09999999999999999}, {"start": [170.507242, 81.713185], "end": [170.2096, 81.67399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [171.20552899999998, 82.249], "end": [171.022773, 82.01082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.0596, 82.824], "end": [169.098785, 83.121642], "type": "segment", "width": 0.09999999999999999}, {"start": [169.098785, 82.526358], "end": [169.0596, 82.824], "type": "segment", "width": 0.09999999999999999}, {"start": [170.78459999999998, 81.828071], "end": [170.507242, 81.713185], "type": "segment", "width": 0.09999999999999999}, {"start": [171.3596, 82.824], "end": [171.320415, 82.526358], "type": "segment", "width": 0.09999999999999999}, {"start": [112.72277299999999, 105.31082699999999], "end": [112.4846, 105.12807099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.905529, 105.54899999999999], "end": [112.72277299999999, 105.31082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [113.020415, 105.826358], "end": [112.905529, 105.54899999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [113.05959999999999, 106.124], "end": [113.020415, 105.826358], "type": "segment", "width": 0.09999999999999999}, {"start": [109.412447, 79.835696], "end": [109.274025, 79.94191099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [109.87556, 79.59461499999999], "end": [109.71436299999999, 79.661384], "type": "segment", "width": 0.09999999999999999}, {"start": [109.71436299999999, 79.661384], "end": [109.55959999999999, 79.74194899999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.207242, 105.013185], "end": [111.9096, 104.97399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.4846, 105.12807099999999], "end": [112.207242, 105.013185], "type": "segment", "width": 0.09999999999999999}, {"start": [169.396427, 83.63717299999999], "end": [169.6346, 83.819929], "type": "segment", "width": 0.09999999999999999}, {"start": [170.507242, 83.934815], "end": [170.78459999999998, 83.819929], "type": "segment", "width": 0.09999999999999999}, {"start": [170.2096, 83.97399999999999], "end": [170.507242, 83.934815], "type": "segment", "width": 0.09999999999999999}, {"start": [169.911958, 105.013185], "end": [169.6346, 105.12807099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [170.507242, 105.013185], "end": [170.2096, 104.97399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [171.20552899999998, 105.54899999999999], "end": [171.022773, 105.31082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [171.022773, 105.31082699999999], "end": [170.78459999999998, 105.12807099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [170.78459999999998, 83.819929], "end": [171.022773, 83.63717299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.213671, 83.399], "end": [169.396427, 83.63717299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.098785, 106.42164199999999], "end": [169.213671, 106.699], "type": "segment", "width": 0.09999999999999999}, {"start": [171.20552899999998, 83.399], "end": [171.320415, 83.121642], "type": "segment", "width": 0.09999999999999999}, {"start": [169.6346, 83.819929], "end": [169.911958, 83.934815], "type": "segment", "width": 0.09999999999999999}, {"start": [171.022773, 83.63717299999999], "end": [171.20552899999998, 83.399], "type": "segment", "width": 0.09999999999999999}, {"start": [169.098785, 83.121642], "end": [169.213671, 83.399], "type": "segment", "width": 0.09999999999999999}, {"start": [169.0596, 106.124], "end": [169.098785, 106.42164199999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.098785, 105.826358], "end": [169.0596, 106.124], "type": "segment", "width": 0.09999999999999999}, {"start": [169.213671, 105.54899999999999], "end": [169.098785, 105.826358], "type": "segment", "width": 0.09999999999999999}, {"start": [169.396427, 105.31082699999999], "end": [169.213671, 105.54899999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [169.6346, 105.12807099999999], "end": [169.396427, 105.31082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [170.2096, 104.97399999999999], "end": [169.911958, 105.013185], "type": "segment", "width": 0.09999999999999999}, {"start": [170.78459999999998, 105.12807099999999], "end": [170.507242, 105.013185], "type": "segment", "width": 0.09999999999999999}, {"start": [171.320415, 83.121642], "end": [171.3596, 82.824], "type": "segment", "width": 0.09999999999999999}, {"start": [171.320415, 105.826358], "end": [171.20552899999998, 105.54899999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [171.3596, 106.124], "end": [171.320415, 105.826358], "type": "segment", "width": 0.09999999999999999}, {"start": [169.911958, 83.934815], "end": [170.2096, 83.97399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [111.3346, 81.828071], "end": [111.09642699999999, 82.01082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [113.020415, 82.526358], "end": [112.905529, 82.249], "type": "segment", "width": 0.09999999999999999}, {"start": [113.05959999999999, 82.824], "end": [113.020415, 82.526358], "type": "segment", "width": 0.09999999999999999}, {"start": [111.611958, 81.713185], "end": [111.3346, 81.828071], "type": "segment", "width": 0.09999999999999999}, {"start": [112.4846, 81.828071], "end": [112.207242, 81.713185], "type": "segment", "width": 0.09999999999999999}, {"start": [111.9096, 81.67399999999999], "end": [111.611958, 81.713185], "type": "segment", "width": 0.09999999999999999}, {"start": [112.207242, 81.713185], "end": [111.9096, 81.67399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.72277299999999, 82.01082699999999], "end": [112.4846, 81.828071], "type": "segment", "width": 0.09999999999999999}, {"start": [112.905529, 82.249], "end": [112.72277299999999, 82.01082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.913671, 82.249], "end": [110.798785, 82.526358], "type": "segment", "width": 0.09999999999999999}, {"start": [111.09642699999999, 82.01082699999999], "end": [110.913671, 82.249], "type": "segment", "width": 0.09999999999999999}, {"start": [111.09642699999999, 83.63717299999999], "end": [111.3346, 83.819929], "type": "segment", "width": 0.09999999999999999}, {"start": [110.913671, 83.399], "end": [111.09642699999999, 83.63717299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.75959999999999, 82.824], "end": [110.798785, 83.121642], "type": "segment", "width": 0.09999999999999999}, {"start": [110.798785, 83.121642], "end": [110.913671, 83.399], "type": "segment", "width": 0.09999999999999999}, {"start": [111.9096, 83.97399999999999], "end": [112.207242, 83.934815], "type": "segment", "width": 0.09999999999999999}, {"start": [111.611958, 83.934815], "end": [111.9096, 83.97399999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [111.3346, 83.819929], "end": [111.611958, 83.934815], "type": "segment", "width": 0.09999999999999999}, {"start": [110.798785, 82.526358], "end": [110.75959999999999, 82.824], "type": "segment", "width": 0.09999999999999999}, {"start": [171.20552899999998, 106.699], "end": [171.320415, 106.42164199999999], "type": "segment", "width": 0.09999999999999999}, {"start": [171.022773, 106.937173], "end": [171.20552899999998, 106.699], "type": "segment", "width": 0.09999999999999999}, {"start": [169.6346, 107.119929], "end": [169.911958, 107.234815], "type": "segment", "width": 0.09999999999999999}, {"start": [170.507242, 107.234815], "end": [170.78459999999998, 107.119929], "type": "segment", "width": 0.09999999999999999}, {"start": [170.2096, 107.274], "end": [170.507242, 107.234815], "type": "segment", "width": 0.09999999999999999}, {"start": [169.213671, 106.699], "end": [169.396427, 106.937173], "type": "segment", "width": 0.09999999999999999}, {"start": [169.396427, 106.937173], "end": [169.6346, 107.119929], "type": "segment", "width": 0.09999999999999999}, {"start": [171.320415, 106.42164199999999], "end": [171.3596, 106.124], "type": "segment", "width": 0.09999999999999999}, {"start": [170.78459999999998, 107.119929], "end": [171.022773, 106.937173], "type": "segment", "width": 0.09999999999999999}, {"start": [169.911958, 107.234815], "end": [170.2096, 107.274], "type": "segment", "width": 0.09999999999999999}, {"start": [113.020415, 106.42164199999999], "end": [113.05959999999999, 106.124], "type": "segment", "width": 0.09999999999999999}, {"start": [112.72277299999999, 106.937173], "end": [112.905529, 106.699], "type": "segment", "width": 0.09999999999999999}, {"start": [110.75959999999999, 106.124], "end": [110.798785, 106.42164199999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.913671, 105.54899999999999], "end": [110.798785, 105.826358], "type": "segment", "width": 0.09999999999999999}, {"start": [112.4846, 107.119929], "end": [112.72277299999999, 106.937173], "type": "segment", "width": 0.09999999999999999}, {"start": [110.798785, 105.826358], "end": [110.75959999999999, 106.124], "type": "segment", "width": 0.09999999999999999}, {"start": [112.905529, 106.699], "end": [113.020415, 106.42164199999999], "type": "segment", "width": 0.09999999999999999}, {"start": [111.9096, 107.274], "end": [112.207242, 107.234815], "type": "segment", "width": 0.09999999999999999}, {"start": [111.09642699999999, 106.937173], "end": [111.3346, 107.119929], "type": "segment", "width": 0.09999999999999999}, {"start": [111.09642699999999, 105.31082699999999], "end": [110.913671, 105.54899999999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.207242, 107.234815], "end": [112.4846, 107.119929], "type": "segment", "width": 0.09999999999999999}, {"start": [111.611958, 107.234815], "end": [111.9096, 107.274], "type": "segment", "width": 0.09999999999999999}, {"start": [111.3346, 105.12807099999999], "end": [111.09642699999999, 105.31082699999999], "type": "segment", "width": 0.09999999999999999}, {"start": [110.798785, 106.42164199999999], "end": [110.913671, 106.699], "type": "segment", "width": 0.09999999999999999}, {"start": [111.3346, 107.119929], "end": [111.611958, 107.234815], "type": "segment", "width": 0.09999999999999999}, {"start": [110.913671, 106.699], "end": [111.09642699999999, 106.937173], "type": "segment", "width": 0.09999999999999999}, {"start": [111.611958, 105.013185], "end": [111.3346, 105.12807099999999], "type": "segment", "width": 0.09999999999999999}, {"start": [111.9096, 104.97399999999999], "end": [111.611958, 105.013185], "type": "segment", "width": 0.09999999999999999}, {"start": [110.21505499999999, 109.44276099999999], "end": [110.044535, 109.40500499999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.207242, 83.934815], "end": [112.4846, 83.819929], "type": "segment", "width": 0.09999999999999999}, {"start": [112.905529, 83.399], "end": [113.020415, 83.121642], "type": "segment", "width": 0.09999999999999999}, {"start": [112.4846, 83.819929], "end": [112.72277299999999, 83.63717299999999], "type": "segment", "width": 0.09999999999999999}, {"start": [112.72277299999999, 83.63717299999999], "end": [112.905529, 83.399], "type": "segment", "width": 0.09999999999999999}, {"start": [113.020415, 83.121642], "end": [113.05959999999999, 82.824], "type": "segment", "width": 0.09999999999999999}, {"start": [109.561681, 109.20505299999999], "end": [109.414391, 109.111201], "type": "segment", "width": 0.09999999999999999}, {"start": [109.71659799999999, 109.285696], "end": [109.561681, 109.20505299999999], "type": "segment", "width": 0.09999999999999999}], "bom": {"both": [[3, "10uf", "C_0805", ["C1", "C3", "C5"]], [3, "0.1uf", "C_0805", ["C2", "C4", "C6"]], [3, "330R", "R_0805", ["R3", "R4", "R6"]], [1, "2.7K", "R_0805", ["R1"]], [1, "100k", "R_0805", ["R2"]], [1, "47K", "R_0805", ["R5"]], [1, "ACT", "LED_0805", ["D1"]], [1, "PORT1", "LED_0805", ["D2"]], [1, "PORT3", "LED_0805", ["D3"]], [1, "PORT2", "LED_0805", ["D4"]], [1, "PORT4", "LED_0805", ["D5"]], [1, "HC-495 12Mhz", "Crystal_SMD_HC49-SD", ["Y1"]], [1, "PWR", "Pin_Header_Straight_1x02_Pitch2.54mm", ["5v_IN"]], [1, "GND", "Pin_Header_Straight_1x02_Pitch2.54mm", ["GND"]], [1, "USB_OTG_AUX", "Pin_Header_Straight_1x04_Pitch2.54mm", ["OTG"]], [1, "FE1.1S", "SOP64P600X175-28N", ["IC1"]], [1, "LOGO", "its", ["G***"]], [1, "105017-0001", "105017-0001", ["J7"]], [1, "Barrel_Jack", "BARREL_JACK", ["J5"]], [4, "UE27AC54100", "USB_A", ["J1", "J2", "J3", "J4"]]], "B": [[1, "LOGO", "its", ["G***"]]], "F": [[3, "10uf", "C_0805", ["C1", "C3", "C5"]], [3, "0.1uf", "C_0805", ["C2", "C4", "C6"]], [3, "330R", "R_0805", ["R3", "R4", "R6"]], [1, "2.7K", "R_0805", ["R1"]], [1, "100k", "R_0805", ["R2"]], [1, "47K", "R_0805", ["R5"]], [1, "ACT", "LED_0805", ["D1"]], [1, "PORT1", "LED_0805", ["D2"]], [1, "PORT3", "LED_0805", ["D3"]], [1, "PORT2", "LED_0805", ["D4"]], [1, "PORT4", "LED_0805", ["D5"]], [1, "HC-495 12Mhz", "Crystal_SMD_HC49-SD", ["Y1"]], [1, "PWR", "Pin_Header_Straight_1x02_Pitch2.54mm", ["5v_IN"]], [1, "GND", "Pin_Header_Straight_1x02_Pitch2.54mm", ["GND"]], [1, "USB_OTG_AUX", "Pin_Header_Straight_1x04_Pitch2.54mm", ["OTG"]], [1, "FE1.1S", "SOP64P600X175-28N", ["IC1"]], [1, "105017-0001", "105017-0001", ["J7"]], [1, "Barrel_Jack", "BARREL_JACK", ["J5"]], [4, "UE27AC54100", "USB_A", ["J1", "J2", "J3", "J4"]]]}, "silkscreen": {"B": [{"angle": 0.0, "horiz_justify": 0, "text": "www.its-labs.com ", "pos": [141.2748, 85.01379999999999], "height": 1.5, "width": 1.5}, {"angle": 0.0, "horiz_justify": 0, "text": "piZero USB Hub", "pos": [141.46022, 82.7024], "height": 2.0, "width": 2.0}, {"angle": 0.0, "horiz_justify": 0, "text": "R_04162018", "pos": [141.3764, 107.72139999999999], "height": 1.5, "width": 1.5}, {"angle": [180.0], "type": "polygon", "pos": [161.2646, 103.6066], "polygons": []}], "F": [{"angle": 90.0, "horiz_justify": 0, "text": "R_04162018", "pos": [151.0284, 95.2119], "height": 1.0, "width": 1.0}, {"angle": 90.0, "horiz_justify": 0, "text": "D-", "pos": [173.03495999999998, 89.916], "height": 0.6, "width": 0.6}, {"angle": 90.0, "horiz_justify": 0, "text": "D+", "pos": [173.00448, 92.46108], "height": 0.6, "width": 0.6}, {"angle": 90.0, "horiz_justify": 0, "text": "GND", "pos": [173.00448, 95.0214], "height": 0.6, "width": 0.6}, {"angle": 90.0, "horiz_justify": 0, "text": "5V", "pos": [173.06544, 97.52076], "height": 0.6, "width": 0.6}, {"angle": 90.0, "horiz_justify": 0, "text": "5V_IN", "pos": [125.76048, 107.32007999999999], "height": 1.0, "width": 1.0}, {"angle": 90.0, "horiz_justify": 0, "text": "USB4", "pos": [152.1206, 103.3526], "height": 1.0, "width": 1.0}, {"angle": 90.0, "horiz_justify": 0, "text": "USB3", "pos": [151.64816, 85.52687999999999], "height": 1.0, "width": 1.0}, {"angle": 90.0, "horiz_justify": 0, "text": "USB2", "pos": [133.1976, 85.6488], "height": 1.0, "width": 1.0}, {"angle": 90.0, "horiz_justify": 0, "text": "USB1", "pos": [114.89435999999999, 85.48116], "height": 1.0, "width": 1.0}, {"angle": 0.0, "horiz_justify": 0, "text": "ACT", "pos": [109.48924, 95.16872], "height": 0.6, "width": 0.6}, {"angle": 0.0, "horiz_justify": 0, "text": "C1", "pos": [142.21948, 103.11424], "height": 0.5, "width": 0.5}, {"start": [142.689, 102.249], "end": [141.689, 102.249], "type": "segment", "width": 0.12}, {"start": [141.689, 103.949], "end": [142.689, 103.949], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "C2", "pos": [135.62076, 107.82827999999999], "height": 0.5, "width": 0.5}, {"start": [136.136, 106.89699999999999], "end": [135.136, 106.89699999999999], "type": "segment", "width": 0.12}, {"start": [135.136, 108.597], "end": [136.136, 108.597], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "C3", "pos": [142.326, 107.6856], "height": 0.5, "width": 0.5}, {"start": [141.826, 108.56099999999999], "end": [142.826, 108.56099999999999], "type": "segment", "width": 0.12}, {"start": [142.826, 106.86099999999999], "end": [141.826, 106.86099999999999], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "C4", "pos": [142.18392, 99.47146], "height": 0.5, "width": 0.5}, {"start": [142.689, 98.5351], "end": [141.689, 98.5351], "type": "segment", "width": 0.12}, {"start": [141.689, 100.23509999999999], "end": [142.689, 100.23509999999999], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "C5", "pos": [129.2, 103.19044], "height": 0.5, "width": 0.5}, {"start": [128.7, 103.949], "end": [129.7, 103.949], "type": "segment", "width": 0.12}, {"start": [129.7, 102.249], "end": [128.7, 102.249], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "C6", "pos": [129.14884, 107.75652], "height": 0.5, "width": 0.5}, {"start": [128.659, 108.637], "end": [129.659, 108.637], "type": "segment", "width": 0.12}, {"start": [129.659, 106.937], "end": [128.659, 106.937], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "D1", "pos": [112.38492, 95.09252], "height": 0.5, "width": 0.5}, {"start": [110.58999999999999, 94.3976], "end": [110.58999999999999, 95.7976], "type": "segment", "width": 0.12}, {"start": [110.58999999999999, 95.7976], "end": [113.39, 95.7976], "type": "segment", "width": 0.12}, {"start": [110.58999999999999, 94.3976], "end": [113.39, 94.3976], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "D2", "pos": [114.84884, 81.7016], "height": 0.5, "width": 0.5}, {"start": [115.559, 79.9016], "end": [114.15899999999999, 79.9016], "type": "segment", "width": 0.12}, {"start": [114.15899999999999, 79.9016], "end": [114.15899999999999, 82.7016], "type": "segment", "width": 0.12}, {"start": [115.559, 79.9016], "end": [115.559, 82.7016], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "D3", "pos": [151.73444, 81.6559], "height": 0.5, "width": 0.5}, {"start": [152.343, 79.85589999999999], "end": [150.94299999999998, 79.85589999999999], "type": "segment", "width": 0.12}, {"start": [150.94299999999998, 79.85589999999999], "end": [150.94299999999998, 82.6559], "type": "segment", "width": 0.12}, {"start": [152.343, 79.85589999999999], "end": [152.343, 82.6559], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "D4", "pos": [133.17692, 81.74736], "height": 0.5, "width": 0.5}, {"start": [133.882, 79.93719999999999], "end": [132.482, 79.93719999999999], "type": "segment", "width": 0.12}, {"start": [132.482, 79.93719999999999], "end": [132.482, 82.7372], "type": "segment", "width": 0.12}, {"start": [133.882, 79.93719999999999], "end": [133.882, 82.7372], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "D5", "pos": [151.68148, 107.252], "height": 0.5, "width": 0.5}, {"start": [150.951, 109.05199999999999], "end": [152.351, 109.05199999999999], "type": "segment", "width": 0.12}, {"start": [152.351, 109.05199999999999], "end": [152.351, 106.252], "type": "segment", "width": 0.12}, {"start": [150.951, 109.05199999999999], "end": [150.951, 106.252], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "IC1", "pos": [135.75799999999998, 100.178], "height": 1.27, "width": 1.27}, {"start": [137.358, 105.128], "end": [134.158, 105.128], "type": "segment", "width": 0.19999999999999998}, {"start": [134.158, 105.128], "end": [134.158, 95.228], "type": "segment", "width": 0.19999999999999998}, {"start": [134.158, 95.228], "end": [137.358, 95.228], "type": "segment", "width": 0.19999999999999998}, {"start": [137.358, 95.228], "end": [137.358, 105.128], "type": "segment", "width": 0.19999999999999998}, {"start": [139.233, 104.908], "end": [137.708, 104.908], "type": "segment", "width": 0.19999999999999998}, {"angle": 0.0, "horiz_justify": 0, "text": "J1", "pos": [123.56124, 89.2302], "height": 1.0, "width": 1.0}, {"start": [116.05199999999999, 93.8754], "end": [116.05199999999999, 91.5454], "type": "segment", "width": 0.12}, {"start": [131.042, 93.8754], "end": [131.042, 91.7554], "type": "segment", "width": 0.12}, {"start": [116.05199999999999, 93.8754], "end": [131.042, 93.8754], "type": "segment", "width": 0.12}, {"start": [116.05199999999999, 79.7854], "end": [131.042, 79.7854], "type": "segment", "width": 0.12}, {"start": [116.05199999999999, 88.58539999999999], "end": [116.05199999999999, 79.7854], "type": "segment", "width": 0.12}, {"start": [131.042, 88.38539999999999], "end": [131.042, 79.7854], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "J2", "pos": [141.80784, 89.34703999999999], "height": 1.0, "width": 1.0}, {"start": [134.32399999999998, 93.8754], "end": [134.32399999999998, 91.5454], "type": "segment", "width": 0.12}, {"start": [149.314, 93.8754], "end": [149.314, 91.7554], "type": "segment", "width": 0.12}, {"start": [134.32399999999998, 93.8754], "end": [149.314, 93.8754], "type": "segment", "width": 0.12}, {"start": [134.32399999999998, 79.7854], "end": [149.314, 79.7854], "type": "segment", "width": 0.12}, {"start": [134.32399999999998, 88.58539999999999], "end": [134.32399999999998, 79.7854], "type": "segment", "width": 0.12}, {"start": [149.314, 88.38539999999999], "end": [149.314, 79.7854], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "J3", "pos": [160.82288, 99.66958], "height": 1.0, "width": 1.0}, {"start": [152.765, 93.81949999999999], "end": [152.765, 91.48949999999999], "type": "segment", "width": 0.12}, {"start": [167.755, 93.81949999999999], "end": [167.755, 91.6995], "type": "segment", "width": 0.12}, {"start": [152.765, 93.81949999999999], "end": [167.755, 93.81949999999999], "type": "segment", "width": 0.12}, {"start": [152.765, 79.7295], "end": [167.755, 79.7295], "type": "segment", "width": 0.12}, {"start": [152.765, 88.5295], "end": [152.765, 79.7295], "type": "segment", "width": 0.12}, {"start": [167.755, 88.3295], "end": [167.755, 79.7295], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "J4", "pos": [159.79872, 89.31909999999999], "height": 1.0, "width": 1.0}, {"start": [167.755, 95.0371], "end": [167.755, 97.3671], "type": "segment", "width": 0.12}, {"start": [152.765, 95.0371], "end": [152.765, 97.1571], "type": "segment", "width": 0.12}, {"start": [167.755, 95.0371], "end": [152.765, 95.0371], "type": "segment", "width": 0.12}, {"start": [167.755, 109.1271], "end": [152.765, 109.1271], "type": "segment", "width": 0.12}, {"start": [167.755, 100.3271], "end": [167.755, 109.1271], "type": "segment", "width": 0.12}, {"start": [152.765, 100.52709999999999], "end": [152.765, 109.1271], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "J5", "pos": [122.66171999999999, 108.57996], "height": 1.0, "width": 1.0}, {"start": [124.29499999999999, 104.2988], "end": [124.29499999999999, 113.0988], "type": "segment", "width": 0.12}, {"start": [124.29499999999999, 113.0988], "end": [115.095, 113.0988], "type": "segment", "width": 0.12}, {"start": [121.595, 98.3988], "end": [124.29499999999999, 98.3988], "type": "segment", "width": 0.12}, {"start": [124.29499999999999, 98.3988], "end": [124.29499999999999, 100.2988], "type": "segment", "width": 0.12}, {"start": [115.095, 113.0988], "end": [115.095, 98.3988], "type": "segment", "width": 0.12}, {"start": [115.095, 98.3988], "end": [117.695, 98.3988], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R1", "pos": [142.281, 95.51414], "height": 0.5, "width": 0.5}, {"start": [142.881, 96.40429999999999], "end": [141.68099999999998, 96.40429999999999], "type": "segment", "width": 0.12}, {"start": [141.68099999999998, 94.6443], "end": [142.881, 94.6443], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R2", "pos": [129.195, 95.53956], "height": 0.5, "width": 0.5}, {"start": [128.595, 94.6494], "end": [129.795, 94.6494], "type": "segment", "width": 0.12}, {"start": [129.795, 96.40939999999999], "end": [128.595, 96.40939999999999], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R3", "pos": [125.15571999999999, 95.54462], "height": 0.5, "width": 0.5}, {"start": [125.71, 96.40429999999999], "end": [124.50999999999999, 96.40429999999999], "type": "segment", "width": 0.12}, {"start": [124.50999999999999, 94.6443], "end": [125.71, 94.6443], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R4", "pos": [121.09688, 95.58525999999999], "height": 0.5, "width": 0.5}, {"start": [121.768, 96.40429999999999], "end": [120.568, 96.40429999999999], "type": "segment", "width": 0.12}, {"start": [120.568, 94.6443], "end": [121.768, 94.6443], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R5", "pos": [129.12884, 99.41557999999999], "height": 0.5, "width": 0.5}, {"start": [128.539, 98.53049999999999], "end": [129.739, 98.53049999999999], "type": "segment", "width": 0.12}, {"start": [129.739, 100.2905], "end": [128.539, 100.2905], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "R6", "pos": [117.08932, 95.5548], "height": 0.5, "width": 0.5}, {"start": [117.669, 96.40939999999999], "end": [116.469, 96.40939999999999], "type": "segment", "width": 0.12}, {"start": [116.469, 94.6494], "end": [117.669, 94.6494], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "Y1", "pos": [147.52784, 101.285], "height": 1.0, "width": 1.0}, {"start": [144.861, 95.38499999999999], "end": [144.861, 107.985], "type": "segment", "width": 0.12}, {"start": [144.861, 107.985], "end": [149.96099999999998, 107.985], "type": "segment", "width": 0.12}, {"start": [149.96099999999998, 107.985], "end": [149.96099999999998, 95.38499999999999], "type": "segment", "width": 0.12}, {"angle": 90.0, "horiz_justify": 0, "text": "J7", "pos": [114.726, 89.877], "height": 1.0, "width": 1.0}, {"start": [113.056, 85.447], "end": [113.056, 85.89699999999999], "type": "segment", "width": 0.12}, {"start": [111.20599999999999, 85.447], "end": [113.056, 85.447], "type": "segment", "width": 0.12}, {"start": [108.65599999999999, 93.247], "end": [108.90599999999999, 93.247], "type": "segment", "width": 0.12}, {"start": [108.65599999999999, 85.447], "end": [108.90599999999999, 85.447], "type": "segment", "width": 0.12}, {"start": [111.20599999999999, 93.247], "end": [113.056, 93.247], "type": "segment", "width": 0.12}, {"start": [113.056, 93.247], "end": [113.056, 92.797], "type": "segment", "width": 0.12}, {"start": [113.65599999999999, 87.247], "end": [113.95599999999999, 87.247], "type": "segment", "width": 0.12}, {"start": [113.95599999999999, 87.247], "end": [113.95599999999999, 87.547], "type": "segment", "width": 0.12}, {"start": [113.95599999999999, 87.547], "end": [113.65599999999999, 87.547], "type": "segment", "width": 0.12}, {"start": [113.65599999999999, 87.547], "end": [113.65599999999999, 87.247], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "OTG", "pos": [171.021, 99.8685], "height": 1.0, "width": 1.0}, {"start": [172.351, 88.5885], "end": [169.691, 88.5885], "type": "segment", "width": 0.12}, {"start": [172.351, 96.26849999999999], "end": [172.351, 88.5885], "type": "segment", "width": 0.12}, {"start": [169.691, 96.26849999999999], "end": [169.691, 88.5885], "type": "segment", "width": 0.12}, {"start": [172.351, 96.26849999999999], "end": [169.691, 96.26849999999999], "type": "segment", "width": 0.12}, {"start": [172.351, 97.5385], "end": [172.351, 98.8685], "type": "segment", "width": 0.12}, {"start": [172.351, 98.8685], "end": [171.021, 98.8685], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "5v_IN", "pos": [111.6918, 104.00309999999999], "height": 1.0, "width": 1.0}, {"start": [114.368, 103.26299999999999], "end": [114.368, 100.603], "type": "segment", "width": 0.12}, {"start": [111.768, 103.26299999999999], "end": [114.368, 103.26299999999999], "type": "segment", "width": 0.12}, {"start": [111.768, 100.603], "end": [114.368, 100.603], "type": "segment", "width": 0.12}, {"start": [111.768, 103.26299999999999], "end": [111.768, 100.603], "type": "segment", "width": 0.12}, {"start": [110.49799999999999, 103.26299999999999], "end": [109.16799999999999, 103.26299999999999], "type": "segment", "width": 0.12}, {"start": [109.16799999999999, 103.26299999999999], "end": [109.16799999999999, 101.93299999999999], "type": "segment", "width": 0.12}, {"angle": 0.0, "horiz_justify": 0, "text": "GND", "pos": [111.66856, 97.17782], "height": 1.0, "width": 1.0}, {"start": [114.36, 100.4814], "end": [114.36, 97.8214], "type": "segment", "width": 0.12}, {"start": [111.75999999999999, 100.4814], "end": [114.36, 100.4814], "type": "segment", "width": 0.12}, {"start": [111.75999999999999, 97.8214], "end": [114.36, 97.8214], "type": "segment", "width": 0.12}, {"start": [111.75999999999999, 100.4814], "end": [111.75999999999999, 97.8214], "type": "segment", "width": 0.12}, {"start": [110.49, 100.4814], "end": [109.16, 100.4814], "type": "segment", "width": 0.12}, {"start": [109.16, 100.4814], "end": [109.16, 99.1514], "type": "segment", "width": 0.12}]}, "edges_bbox": {"minx": 108.53998299999999, "miny": 79.423999, "maxx": 173.60199, "maxy": 109.52304}, "metadata": {"date": "2018-04-04", "company": "Eladio Martinez", "revision": "1.0", "title": "piZero 4 Port USB Hub"}}
+///////////////////////////////////////////////
+
+///////////////////////////////////////////////
+/* PCB rendering code */
+
+var redrawOnDrag = true;
+
+function deg2rad(deg) {
+  return deg * Math.PI / 180;
+}
+
+function drawtext(ctx, scalefactor, text, color, flip) {
+  ctx.save();
+  ctx.translate(...text.pos);
+  angle = -text.angle;
+  if (flip) {
+    ctx.scale(-1, 1);
+    angle = -angle;
+  }
+  txt = text.text.split("\n")
+  ctx.rotate(deg2rad(angle));
+  ctx.scale(text.width, text.height);
+  ctx.fillStyle = color;
+  switch (text.horiz_justify) {
+    case -1:
+      ctx.textAlign = "left";
+      break;
+    case 0:
+      ctx.textAlign = "center";
+      break;
+    case 1:
+      ctx.textAlign = "right";
+      break;
+  }
+  for (i = 0; i < txt.length; i++) {
+    offset = -(txt.length - 1) * 0.8 + i * 1.6;
+    ctx.fillText(txt[i], 0, offset);
+  }
+  ctx.restore();
+}
+
+function drawedge(ctx, scalefactor, edge, color) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1 / scalefactor, edge.width);
+  ctx.lineCap = "round";
+  if (edge.type == "segment") {
+    ctx.beginPath();
+    ctx.moveTo(...edge.start);
+    ctx.lineTo(...edge.end);
+    ctx.stroke();
+  }
+  if (edge.type == "arc") {
+    ctx.beginPath();
+    ctx.arc(
+      ...edge.start,
+      edge.radius,
+      deg2rad(edge.startangle),
+      deg2rad(edge.endangle));
+    ctx.stroke();
+  }
+  if (edge.type == "circle") {
+    ctx.beginPath();
+    ctx.arc(
+      ...edge.start,
+      edge.radius,
+      0, 2 * Math.PI);
+    ctx.stroke();
+  }
+}
+
+function drawOblong(ctx, scalefactor, color, size) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  if (size[0] > size[1]) {
+    ctx.lineWidth = size[1];
+    var from = [-size[0] / 2 + size[1] / 2, 0];
+    var to = [-from[0], 0];
+  } else {
+    ctx.lineWidth = size[0];
+    var from = [0, -size[1] / 2 + size[0] / 2];
+    var to = [0, -from[1]];
+  }
+  ctx.moveTo(...from);
+  ctx.lineTo(...to);
+  ctx.stroke();
+}
+
+function drawRoundRect(ctx, scalefactor, color, size, radius) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  x = size[0] * -0.5;
+  y = size[1] * -0.5;
+  width = size[0];
+  height = size[1];
+  ctx.moveTo(x, 0);
+  ctx.arcTo(x, y + height, x + width, y + height, radius);
+  ctx.arcTo(x + width, y + height, x + width, y, radius);
+  ctx.arcTo(x + width, y, x, y, radius);
+  ctx.arcTo(x, y, x, y + height, radius);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawPolygons(ctx, scalefactor, color, polygons) {
+  ctx.fillStyle = color;
+  for (polygon of polygons) {
+    ctx.beginPath();
+    for (vertex of polygon) {
+      ctx.lineTo(...vertex)
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function drawPolygonShape(ctx, scalefactor, shape, color) {
+  ctx.save();
+  ctx.translate(...shape.pos);
+  ctx.rotate(deg2rad(-shape.angle));
+  drawPolygons(ctx, scalefactor, color, shape.polygons);
+  ctx.restore();
+}
+
+function drawDrawing(ctx, layer, scalefactor, drawing, color) {
+  if (["segment", "arc", "circle"].includes(drawing.type)) {
+    drawedge(ctx, scalefactor, drawing, color);
+  } else if (drawing.type == "polygon") {
+    drawPolygonShape(ctx, scalefactor, drawing, color);
+  } else {
+    drawtext(ctx, scalefactor, drawing, color, layer == "B");
+  }
+}
+
+function drawModule(ctx, layer, scalefactor, module, highlight) {
+  var padcolor = "#808080";
+  if (highlight) {
+    padcolor = "#D04040";
+    // draw bounding box
+    if (module.layer == layer) {
+      ctx.save();
+      ctx.globalAlpha = 0.2;
+      ctx.translate(...module.bbox.pos);
+      ctx.fillStyle = "#D04040";
+      ctx.fillRect(
+        0, 0,
+        ...module.bbox.size);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = "#D04040";
+      ctx.lineWidth = 2 / scalefactor;
+      ctx.strokeRect(
+        0, 0,
+        ...module.bbox.size);
+      ctx.restore();
+    }
+  }
+  // draw drawings
+  for (drawing of module.drawings) {
+    if (drawing.layer == layer) {
+      drawDrawing(ctx, layer, scalefactor, drawing.drawing, padcolor);
+    }
+  }
+  // draw pads
+  for (pad of module.pads) {
+    if (pad.layers.includes(layer)) {
+      ctx.save();
+      ctx.translate(...pad.pos);
+      ctx.rotate(deg2rad(pad.angle));
+      ctx.fillStyle = padcolor;
+      if (pad.shape == "rect") {
+        ctx.fillRect(
+          ...pad.size.map(c => -c * 0.5),
+          ...pad.size);
+      } else if (pad.shape == "oval") {
+        drawOblong(ctx, scalefactor, padcolor, pad.size)
+      } else if (pad.shape == "circle") {
+        ctx.beginPath();
+        ctx.arc(0, 0, pad.size[0] / 2, 0, 2 * Math.PI);
+        ctx.fill();
+      } else if (pad.shape == "roundrect") {
+        drawRoundRect(ctx, scalefactor, padcolor, pad.size, pad.radius)
+      } else if (pad.shape == "custom") {
+        drawPolygons(ctx, scalefactor, padcolor, pad.polygons)
+      }
+      if (pad.type == "th") {
+        if (pad.drillshape == "oblong") {
+          drawOblong(ctx, scalefactor, "#CCCCCC", pad.drillsize)
+        } else {
+          ctx.fillStyle = "#CCCCCC"
+          ctx.beginPath();
+          ctx.arc(0, 0, pad.drillsize[0] / 2, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+  }
+}
+
+function drawEdges(canvas, scalefactor) {
+  var ctx = canvas.getContext("2d");
+  var edgecolor = getComputedStyle(topmostdiv).getPropertyValue('--pcb-edge-color');
+  for (edge of pcbdata.edges) {
+    drawedge(ctx, scalefactor, edge, edgecolor);
+  }
+}
+
+function drawModules(canvas, layer, scalefactor, highlightedRefs) {
+  var ctx = canvas.getContext("2d");
+  for (i in pcbdata.modules) {
+    var mod = pcbdata.modules[i];
+    var highlight = highlightedRefs.includes(mod.ref);
+    if (highlightedRefs.length == 0 || highlight) {
+      drawModule(ctx, layer, scalefactor, mod, highlight);
+    }
+  }
+}
+
+function drawSilkscreen(canvas, layer, scalefactor) {
+  var ctx = canvas.getContext("2d");
+  for (d of pcbdata.silkscreen[layer]) {
+    if (["segment", "arc", "circle"].includes(d.type)) {
+      drawedge(ctx, scalefactor, d, "#aa4");
+    } else if (d.type == "polygon") {
+      drawPolygonShape(ctx, scalefactor, d, "#4aa");
+    } else {
+      drawtext(ctx, scalefactor, d, "#4aa", layer == "B");
+    }
+  }
+}
+
+function clearCanvas(canvas) {
+  var ctx = canvas.getContext("2d");
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+}
+
+function drawHighlightsOnLayer(canvasdict) {
+  clearCanvas(canvasdict.highlight);
+  drawModules(canvasdict.highlight, canvasdict.layer,
+    canvasdict.transform.s, highlightedRefs);
+}
+
+function drawHighlights() {
+  drawHighlightsOnLayer(allcanvas.front);
+  drawHighlightsOnLayer(allcanvas.back);
+}
+
+function drawBackground(canvasdict) {
+  clearCanvas(canvasdict.bg);
+  clearCanvas(canvasdict.silk);
+  drawEdges(canvasdict.bg, canvasdict.transform.s);
+  drawModules(canvasdict.bg, canvasdict.layer, canvasdict.transform.s, []);
+  drawSilkscreen(canvasdict.silk, canvasdict.layer, canvasdict.transform.s);
+}
+
+function prepareCanvas(canvas, flip, transform) {
+  var ctx = canvas.getContext("2d");
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  fontsize = 1.55;
+  ctx.font = "bold " + fontsize + "px Consolas,\"DejaVu Sans Mono\",Monaco,monospace";
+  ctx.textBaseline = "middle";
+  ctx.scale(transform.zoom, transform.zoom);
+  ctx.translate(transform.panx, transform.pany);
+  if (flip) {
+    ctx.scale(-1, 1);
+  }
+  ctx.translate(transform.x, transform.y);
+  ctx.scale(transform.s, transform.s);
+}
+
+function prepareLayer(canvasdict) {
+  var flip = (canvasdict.layer == "B");
+  for (c of ["bg", "silk", "highlight"]) {
+    prepareCanvas(canvasdict[c], flip, canvasdict.transform);
+  }
+}
+
+function recalcLayerScale(canvasdict) {
+  canvasdivid = {
+    "F": "frontcanvas",
+    "B": "backcanvas"
+  }[canvasdict.layer];
+  var width = document.getElementById(canvasdivid).clientWidth * 2;
+  var height = document.getElementById(canvasdivid).clientHeight * 2;
+  var bbox = pcbdata.edges_bbox;
+  var scalefactor = 0.98 * Math.min(
+    width / (bbox.maxx - bbox.minx),
+    height / (bbox.maxy - bbox.miny)
+  );
+  if (scalefactor < 0.1) {
+    scalefactor = 1;
+  }
+  canvasdict.transform.s = scalefactor;
+  var flip = (canvasdict.layer == "B");
+  if (flip) {
+    canvasdict.transform.x = -((bbox.maxx + bbox.minx) * scalefactor + width) * 0.5;
+  } else {
+    canvasdict.transform.x = -((bbox.maxx + bbox.minx) * scalefactor - width) * 0.5;
+  }
+  canvasdict.transform.y = -((bbox.maxy + bbox.miny) * scalefactor - height) * 0.5;
+  for (c of ["bg", "silk", "highlight"]) {
+    canvas = canvasdict[c];
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = (width / 2) + "px";
+    canvas.style.height = (height / 2) + "px";
+  }
+  console.log("Scale factor " + canvasdivid + ": ", canvasdict.transform);
+}
+
+function redrawCanvas(layerdict) {
+  prepareLayer(layerdict);
+  drawBackground(layerdict);
+  drawHighlights(layerdict);
+}
+
+function resizeCanvas(layerdict) {
+  recalcLayerScale(layerdict);
+  redrawCanvas(layerdict);
+}
+
+function resizeAll() {
+  resizeCanvas(allcanvas.front);
+  resizeCanvas(allcanvas.back);
+}
+
+function bboxScan(layer, x, y) {
+  var result = [];
+  for (var i in pcbdata.modules) {
+    var module = pcbdata.modules[i];
+    if (module.layer == layer) {
+      var b = module.bbox;
+      if (b.pos[0] <= x && b.pos[0] + b.size[0] >= x &&
+        b.pos[1] <= y && b.pos[1] + b.size[1] >= y) {
+        result.push(module.ref);
+      }
+    }
+  }
+  return result;
+}
+
+function handleMouseDown(e, layerdict) {
+  if (e.which != 1) {
+    return;
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  layerdict.transform.mousestartx = e.offsetX;
+  layerdict.transform.mousestarty = e.offsetY;
+  layerdict.transform.mousedownx = e.offsetX;
+  layerdict.transform.mousedowny = e.offsetY;
+  layerdict.transform.mousedown = true;
+}
+
+function handleMouseClick(e, layerdict) {
+  var x = e.offsetX;
+  var y = e.offsetY;
+  var t = layerdict.transform;
+  if (layerdict.layer == "B") {
+    x = (2 * x / t.zoom - t.panx + t.x) / -t.s;
+  } else {
+    x = (2 * x / t.zoom - t.panx - t.x) / t.s;
+  }
+  y = (2 * y / t.zoom - t.y - t.pany) / t.s;
+  var reflist = bboxScan(layerdict.layer, x, y);
+  if (reflist.length > 0) {
+    modulesClicked(reflist);
+  }
+}
+
+function handleMouseUp(e, layerdict) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.which == 1 &&
+    layerdict.transform.mousedown &&
+    layerdict.transform.mousedownx == e.offsetX &&
+    layerdict.transform.mousedowny == e.offsetY) {
+    // This is just a click
+    handleMouseClick(e, layerdict);
+  }
+  layerdict.transform.mousedown = false;
+  if (e.which == 3) {
+    // Reset pan and zoom on right click.
+    layerdict.transform.panx = 0;
+    layerdict.transform.pany = 0;
+    layerdict.transform.zoom = 1;
+  }
+  redrawCanvas(layerdict);
+}
+
+function handleMouseMove(e, layerdict) {
+  if (!layerdict.transform.mousedown) {
+    return;
+  }
+  e.preventDefault();
+  e.stopPropagation();
+  dx = e.offsetX - layerdict.transform.mousestartx;
+  dy = e.offsetY - layerdict.transform.mousestarty;
+  layerdict.transform.panx += 2 * dx / layerdict.transform.zoom;
+  layerdict.transform.pany += 2 * dy / layerdict.transform.zoom;
+  layerdict.transform.mousestartx = e.offsetX;
+  layerdict.transform.mousestarty = e.offsetY;
+  if (redrawOnDrag) {
+    redrawCanvas(layerdict);
+  }
+}
+
+function handleMouseWheel(e, layerdict) {
+  e.preventDefault();
+  e.stopPropagation();
+  var t = layerdict.transform;
+  var wheeldelta = e.deltaY;
+  if (e.deltaMode == 1) {
+    // FF only, scroll by lines
+    wheeldelta *= 30;
+  } else if (e.deltaMode == 2) {
+    wheeldelta *= 300;
+  }
+  var m = Math.pow(1.1, -wheeldelta / 40);
+  // Limit amount of zoom per tick.
+  if (m > 2) {
+    m = 2;
+  } else if (m < 0.5) {
+    m = 0.5;
+  }
+  t.zoom *= m;
+  var zoomd = (1 - m) / t.zoom;
+  t.panx += 2 * e.offsetX * zoomd;
+  t.pany += 2 * e.offsetY * zoomd;
+  redrawCanvas(layerdict);
+  console.log(layerdict.transform.zoom);
+}
+
+function addMouseHandlers(div, layerdict) {
+  div.onmousedown = function(e) {
+    handleMouseDown(e, layerdict);
+  };
+  div.onmousemove = function(e) {
+    handleMouseMove(e, layerdict);
+  };
+  div.onmouseup = function(e) {
+    handleMouseUp(e, layerdict);
+  };
+  div.onmouseout = function(e) {
+    handleMouseUp(e, layerdict);
+  }
+  div.onwheel = function(e) {
+    handleMouseWheel(e, layerdict);
+  }
+  for (element of [div, layerdict.bg, layerdict.silk, layerdict.highlight]) {
+    element.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+    }, false);
+  }
+}
+
+function setRedrawOnDrag(value) {
+  redrawOnDrag = value;
+  writeStorage("redrawOnDrag", value);
+}
+
+function initRender() {
+  allcanvas = {
+    front: {
+      transform: {
+        x: 0,
+        y: 0,
+        s: 1,
+        panx: 0,
+        pany: 0,
+        zoom: 1,
+        mousestartx: 0,
+        mousestarty: 0,
+        mousedown: false,
+      },
+      bg: document.getElementById("F_bg"),
+      silk: document.getElementById("F_slk"),
+      highlight: document.getElementById("F_hl"),
+      layer: "F",
+    },
+    back: {
+      transform: {
+        x: 0,
+        y: 0,
+        s: 1,
+        panx: 0,
+        pany: 0,
+        zoom: 1,
+        mousestartx: 0,
+        mousestarty: 0,
+        mousedown: false,
+      },
+      bg: document.getElementById("B_bg"),
+      silk: document.getElementById("B_slk"),
+      highlight: document.getElementById("B_hl"),
+      layer: "B",
+    }
+  };
+  addMouseHandlers(document.getElementById("frontcanvas"), allcanvas.front);
+  addMouseHandlers(document.getElementById("backcanvas"), allcanvas.back);
+}
+
+///////////////////////////////////////////////
+
+///////////////////////////////////////////////
+/* DOM manipulation and misc code */
+
+var storagePrefix = 'KiCad_HTML_BOM__' + pcbdata.metadata.title + '__' +
+  pcbdata.metadata.revision + '__';
+var bomsplit;
+var canvassplit;
+var canvaslayout = "default";
+var bomlayout = "default";
+var currentHighlightedRowId;
+var highlightHandlers = [];
+var highlightedRefs = [];
+var checkboxes = [];
+var bomCheckboxes = "";
+var storage;
+var lastClickedRef;
+
+function initStorage(key) {
+  try {
+    window.localStorage.getItem("blank");
+    storage = window.localStorage;
+  } catch (e) {
+    // localStorage not available
+  }
+  if (!storage) {
+    try {
+      window.sessionStorage.getItem("blank");
+      storage = window.sessionStorage;
+    } catch (e) {
+      // sessionStorage also not available
+    }
+  }
+}
+
+function readStorage(key) {
+  if (storage) {
+    return storage.getItem(storagePrefix + '#' + key);
+  } else {
+    return null;
+  }
+}
+
+function writeStorage(key, value) {
+  if (storage) {
+    storage.setItem(storagePrefix + '#' + key, value);
+  }
+}
+
+function dbg(html) {
+  dbgdiv.innerHTML = html;
+}
+
+function setDarkMode(value) {
+  if (value) {
+    topmostdiv.classList.add("dark");
+  } else {
+    topmostdiv.classList.remove("dark");
+  }
+  writeStorage("darkmode", value);
+  redrawCanvas(allcanvas.front);
+  redrawCanvas(allcanvas.back);
+}
+
+function getStoredCheckboxRefs(checkbox) {
+  existingRefs = readStorage("checkbox_" + checkbox);
+  if (!existingRefs) {
+    refsSet = new Set();
+  } else {
+    refsSet = new Set(existingRefs.split(","));
+  }
+  return refsSet;
+}
+
+function setBomCheckboxState(checkbox, element, references) {
+  var storedRefsSet = getStoredCheckboxRefs(checkbox);
+  var currentRefsSet = new Set(references);
+  // Get difference of current - stored
+  var difference = new Set(currentRefsSet);
+  for (ref of storedRefsSet) {
+    difference.delete(ref);
+  }
+  if (difference.size == 0) {
+    // All the current refs are stored
+    element.checked = true;
+  } else if (difference.size == currentRefsSet.size) {
+    // None of the current refs are stored
+    element.checked = false;
+  } else {
+    // Some of the refs are stored
+    element.checked = false;
+    element.indeterminate = true;
+  }
+}
+
+function createCheckboxChangeHandler(checkbox, references) {
+  return function() {
+    refsSet = getStoredCheckboxRefs(checkbox);
+    if (this.checked) {
+      // checkbox ticked
+      for (ref of references) {
+        refsSet.add(ref);
+      }
+    } else {
+      // checkbox unticked
+      for (ref of references) {
+        refsSet.delete(ref);
+      }
+    }
+    writeStorage("checkbox_" + checkbox, [...refsSet].join(","));
+  }
+}
+
+function createRowHighlightHandler(rowid, refs) {
+  return function() {
+    if (currentHighlightedRowId) {
+      if (currentHighlightedRowId == rowid) {
+        return;
+      }
+      document.getElementById(currentHighlightedRowId).classList.remove("highlighted");
+    }
+    document.getElementById(rowid).classList.add("highlighted");
+    currentHighlightedRowId = rowid;
+    highlightedRefs = refs;
+    drawHighlights();
+  }
+}
+
+function entryMatches(entry) {
+  // check refs
+  for (ref of entry[3]) {
+    if (ref.toLowerCase().indexOf(filter) >= 0) {
+      return true;
+    }
+  }
+  // check value
+  if (entry[1].toLowerCase().indexOf(filter) >= 0) {
+    return true;
+  }
+  // check footprint
+  if (entry[2].toLowerCase().indexOf(filter) >= 0) {
+    return true;
+  }
+  return false;
+}
+
+function findRefInEntry(entry) {
+  for (ref of entry[3]) {
+    if (ref.toLowerCase() == reflookup) {
+      return [ref];
+    }
+  }
+  return false;
+}
+
+function highlightFilter(s) {
+  if (!filter) {
+    return s;
+  }
+  var parts = s.toLowerCase().split(filter);
+  if (parts.length == 1) {
+    return s;
+  }
+  var r = "";
+  var pos = 0;
+  for (var i in parts) {
+    if (i > 0) {
+      r += '<mark class="highlight">' +
+        s.substring(pos, pos + filter.length) +
+        '</mark>';
+      pos += filter.length;
+    }
+    r += s.substring(pos, pos + parts[i].length);
+    pos += parts[i].length;
+  }
+  return r;
+}
+
+function populateBomHeader() {
+  var tr = document.createElement("TR");
+  var td = document.createElement("TH");
+  td.classList.add("numCol");
+  tr.appendChild(td);
+  checkboxes = bomCheckboxes.split(",");
+  for (checkbox of checkboxes) {
+    if (checkbox) {
+      td = document.createElement("TH");
+      td.classList.add("bom-checkbox");
+      td.innerHTML = checkbox;
+      tr.appendChild(td);
+    }
+  }
+  td = document.createElement("TH");
+  td.classList.add("References");
+  td.innerHTML = "References";
+  tr.appendChild(td);
+  td = document.createElement("TH");
+  td.classList.add("Value");
+  td.innerHTML = "Value";
+  tr.appendChild(td);
+  td = document.createElement("TH");
+  td.classList.add("Footprint");
+  td.innerHTML = "Footprint";
+  tr.appendChild(td);
+  td = document.createElement("TH");
+  td.classList.add("Quantity");
+  td.innerHTML = "Quantity";
+  tr.appendChild(td);
+  bomhead.appendChild(tr);
+}
+
+function populateBomBody() {
+  highlightHandlers = [];
+  currentHighlightedRowId = null;
+  var first = true;
+  switch (canvaslayout) {
+    case 'F':
+      bomtable = pcbdata.bom.F;
+      break;
+    case 'FB':
+      bomtable = pcbdata.bom.both;
+      break;
+    case 'B':
+      bomtable = pcbdata.bom.B;
+      break;
+  }
+  for (var i in bomtable) {
+    var bomentry = bomtable[i];
+    if (filter && !entryMatches(bomentry)) {
+      continue;
+    }
+    references = bomentry[3];
+    if (reflookup) {
+      references = findRefInEntry(bomentry);
+      if (!references) {
+        continue;
+      }
+    }
+    var tr = document.createElement("TR");
+    var td = document.createElement("TD");
+    var rownum = +i + 1;
+    tr.id = "bomrow" + rownum;
+    td.textContent = rownum;
+    tr.appendChild(td);
+    // Checkboxes
+    for (checkbox of checkboxes) {
+      if (checkbox) {
+        td = document.createElement("TD");
+        input = document.createElement("input");
+        input.type = "checkbox";
+        input.onchange = createCheckboxChangeHandler(checkbox, references);
+        setBomCheckboxState(checkbox, input, references);
+        td.appendChild(input);
+        tr.appendChild(td);
+      }
+    }
+    // References
+    td = document.createElement("TD");
+    td.innerHTML = highlightFilter(references.join(", "));
+    tr.appendChild(td);
+    // Value
+    td = document.createElement("TD");
+    td.innerHTML = highlightFilter(bomentry[1]);
+    tr.appendChild(td);
+    // Footprint
+    td = document.createElement("TD");
+    td.innerHTML = highlightFilter(bomentry[2]);
+    tr.appendChild(td);
+    // Quantity
+    td = document.createElement("TD");
+    td.textContent = bomentry[3].length;
+    tr.appendChild(td);
+    bom.appendChild(tr);
+    var handler = createRowHighlightHandler(tr.id, references);
+    tr.onmousemove = handler;
+    highlightHandlers.push({
+      id: tr.id,
+      handler: handler,
+      refs: references
+    });
+    if ((filter || reflookup) && first) {
+      highlightedRefs = references;
+      drawHighlights();
+      first = false;
+    }
+  }
+}
+
+function smoothScrollToRow(rowid) {
+  document.getElementById(rowid).scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+    inline: "nearest"
+  });}
+
+function highlightPreviousRow() {
+  if (!currentHighlightedRowId) {
+    highlightHandlers[highlightHandlers.length - 1].handler();
+  } else {
+    if (highlightHandlers.length > 1 &&
+      highlightHandlers[0].id == currentHighlightedRowId) {
+      highlightHandlers[highlightHandlers.length - 1].handler();
+    } else {
+      for (var i = 0; i < highlightHandlers.length - 1; i++) {
+        if (highlightHandlers[i + 1].id == currentHighlightedRowId) {
+          highlightHandlers[i].handler();
+          break;
+        }
+      }
+    }
+  }
+  smoothScrollToRow(currentHighlightedRowId);
+}
+
+function highlightNextRow() {
+  if (!currentHighlightedRowId) {
+    highlightHandlers[0].handler();
+  } else {
+    if (highlightHandlers.length > 1 &&
+      highlightHandlers[highlightHandlers.length - 1].id == currentHighlightedRowId) {
+      highlightHandlers[0].handler();
+    } else {
+      for (var i = 1; i < highlightHandlers.length; i++) {
+        if (highlightHandlers[i - 1].id == currentHighlightedRowId) {
+          highlightHandlers[i].handler();
+          break;
+        }
+      }
+    }
+  }
+  smoothScrollToRow(currentHighlightedRowId);
+}
+
+function populateBomTable() {
+  while (bom.firstChild) {
+    bom.removeChild(bom.firstChild);
+  }
+  while (bomhead.firstChild) {
+    bomhead.removeChild(bomhead.firstChild);
+  }
+  populateBomHeader();
+  populateBomBody();
+}
+
+function modulesClicked(references) {
+  var lastClickedIndex = references.indexOf(lastClickedRef);
+  var ref = references[(lastClickedIndex + 1) % references.length];
+  for (var handler of highlightHandlers) {
+    if (handler.refs.indexOf(ref) >= 0) {
+      lastClickedRef = ref;
+      handler.handler();
+      smoothScrollToRow(currentHighlightedRowId);
+      break;
+    }
+  }
+}
+
+function updateFilter(input) {
+  filter = input.toLowerCase();
+  populateBomTable();
+}
+
+function updateRefLookup(input) {
+  reflookup = input.toLowerCase();
+  populateBomTable();
+}
+
+function silkscreenVisible(visible) {
+  if (visible) {
+    allcanvas.front.silk.style.display = "";
+    allcanvas.back.silk.style.display = "";
+    writeStorage("silkscreenVisible", true);
+  } else {
+    allcanvas.front.silk.style.display = "none";
+    allcanvas.back.silk.style.display = "none";
+    writeStorage("silkscreenVisible", false);
+  }
+}
+
+function changeCanvasLayout(layout) {
+  document.getElementById("fl-btn").classList.remove("depressed");
+  document.getElementById("fb-btn").classList.remove("depressed");
+  document.getElementById("bl-btn").classList.remove("depressed");
+  switch (layout) {
+    case 'F':
+      document.getElementById("fl-btn").classList.add("depressed");
+      if (bomlayout != "BOM") {
+        canvassplit.collapse(1);
+      }
+      break;
+    case 'B':
+      document.getElementById("bl-btn").classList.add("depressed");
+      if (bomlayout != "BOM") {
+        canvassplit.collapse(0);
+      }
+      break;
+    default:
+      document.getElementById("fb-btn").classList.add("depressed");
+      if (bomlayout != "BOM") {
+        canvassplit.setSizes([50, 50]);
+      }
+  }
+  canvaslayout = layout;
+  writeStorage("canvaslayout", layout);
+  resizeAll();
+  populateBomTable();
+}
+
+function populateMetadata() {
+  document.getElementById("title").innerHTML = pcbdata.metadata.title;
+  document.getElementById("revision").innerHTML = "Rev: " + pcbdata.metadata.revision;
+  document.getElementById("company").innerHTML = pcbdata.metadata.company;
+  document.getElementById("filedate").innerHTML = pcbdata.metadata.date;
+  if (pcbdata.metadata.title != "") {
+    document.title = pcbdata.metadata.title + " BOM";
+  }
+}
+
+function changeBomLayout(layout) {
+  document.getElementById("bom-btn").classList.remove("depressed");
+  document.getElementById("lr-btn").classList.remove("depressed");
+  document.getElementById("tb-btn").classList.remove("depressed");
+  switch (layout) {
+    case 'BOM':
+      document.getElementById("bom-btn").classList.add("depressed");
+      if (bomsplit) {
+        bomsplit.destroy();
+        bomsplit = null;
+        canvassplit.destroy();
+        canvassplit = null;
+      }
+      document.getElementById("frontcanvas").style.display = "none";
+      document.getElementById("backcanvas").style.display = "none";
+      document.getElementById("bot").style.height = "";
+      break;
+    case 'TB':
+      document.getElementById("tb-btn").classList.add("depressed");
+      document.getElementById("frontcanvas").style.display = "";
+      document.getElementById("backcanvas").style.display = "";
+      document.getElementById("bot").style.height = "calc(100% - 80px)";
+      document.getElementById("bomdiv").classList.remove("split-horizontal");
+      document.getElementById("canvasdiv").classList.remove("split-horizontal");
+      document.getElementById("frontcanvas").classList.add("split-horizontal");
+      document.getElementById("backcanvas").classList.add("split-horizontal");
+      if (bomsplit) {
+        bomsplit.destroy();
+        bomsplit = null;
+        canvassplit.destroy();
+        canvassplit = null;
+      }
+      bomsplit = Split(['#bomdiv', '#canvasdiv'], {
+        sizes: [50, 50],
+        onDragEnd: resizeAll,
+        direction: "vertical",
+        gutterSize: 5
+      });
+      canvassplit = Split(['#frontcanvas', '#backcanvas'], {
+        sizes: [50, 50],
+        gutterSize: 5,
+        onDragEnd: resizeAll
+      });
+      break;
+    case 'LR':
+      document.getElementById("lr-btn").classList.add("depressed");
+      document.getElementById("frontcanvas").style.display = "";
+      document.getElementById("backcanvas").style.display = "";
+      document.getElementById("bot").style.height = "calc(100% - 80px)";
+      document.getElementById("bomdiv").classList.add("split-horizontal");
+      document.getElementById("canvasdiv").classList.add("split-horizontal");
+      document.getElementById("frontcanvas").classList.remove("split-horizontal");
+      document.getElementById("backcanvas").classList.remove("split-horizontal");
+      if (bomsplit) {
+        bomsplit.destroy();
+        bomsplit = null;
+        canvassplit.destroy();
+        canvassplit = null;
+      }
+      bomsplit = Split(['#bomdiv', '#canvasdiv'], {
+        sizes: [50, 50],
+        onDragEnd: resizeAll,
+        gutterSize: 5
+      });
+      canvassplit = Split(['#frontcanvas', '#backcanvas'], {
+        sizes: [50, 50],
+        gutterSize: 5,
+        direction: "vertical",
+        onDragEnd: resizeAll
+      });
+  }
+  bomlayout = layout;
+  writeStorage("bomlayout", layout);
+  changeCanvasLayout(canvaslayout);
+}
+
+function focusInputField(input) {
+  input.scrollIntoView(false);
+  input.focus();
+  input.select();
+}
+
+function focusFilterField() {
+  focusInputField(document.getElementById("filter"));
+}
+
+function focusRefLookupField() {
+  focusInputField(document.getElementById("reflookup"));
+}
+
+function toggleBomCheckbox(bomrowid, checkboxnum) {
+  if (!bomrowid || checkboxnum > checkboxes.length) {
+    return;
+  }
+  var bomrow = document.getElementById(bomrowid);
+  var checkbox = bomrow.childNodes[checkboxnum].childNodes[0];
+  checkbox.checked = !checkbox.checked;
+  checkbox.indeterminate = false;
+  checkbox.onchange();
+}
+
+function removeGutterNode(node) {
+  for (var i = 0; i < node.childNodes.length; i++) {
+    if (node.childNodes[i].classList &&
+      node.childNodes[i].classList.contains("gutter")) {
+      node.removeChild(node.childNodes[i]);
+      break;
+    }
+  }
+}
+
+function cleanGutters() {
+  removeGutterNode(document.getElementById("bot"));
+  removeGutterNode(document.getElementById("canvasdiv"));
+}
+
+function setBomCheckboxes(value) {
+  bomCheckboxes = value;
+  writeStorage("bomCheckboxes", value);
+  populateBomTable();
+}
+
+document.onkeydown = function(e) {
+  switch (e.key) {
+    case "ArrowUp":
+      highlightPreviousRow();
+      e.preventDefault();
+      break;
+    case "ArrowDown":
+      highlightNextRow();
+      e.preventDefault();
+      break;
+    default:
+      break;
+  }
+  if (e.altKey) {
+    switch (e.key) {
+      case "f":
+        focusFilterField();
+        e.preventDefault();
+        break;
+      case "r":
+        focusRefLookupField();
+        e.preventDefault();
+        break;
+      case "z":
+        changeBomLayout("BOM");
+        e.preventDefault();
+        break;
+      case "x":
+        changeBomLayout("LR");
+        e.preventDefault();
+        break;
+      case "c":
+        changeBomLayout("TB");
+        e.preventDefault();
+        break;
+      case "v":
+        changeCanvasLayout("F");
+        e.preventDefault();
+        break;
+      case "b":
+        changeCanvasLayout("FB");
+        e.preventDefault();
+        break;
+      case "n":
+        changeCanvasLayout("B");
+        e.preventDefault();
+        break;
+      default:
+        break;
+    }
+    if (e.key >= '1' && e.key <= '9') {
+      toggleBomCheckbox(currentHighlightedRowId, parseInt(e.key));
+    }
+  }
+}
+
+window.onload = function(e) {
+  initStorage();
+  cleanGutters();
+  initRender();
+  dbgdiv = document.getElementById("dbg");
+  bom = document.getElementById("bombody");
+  bomhead = document.getElementById("bomhead");
+  bomlayout = readStorage("bomlayout");
+  if (!bomlayout) {
+    bomlayout = "LR";
+  }
+  canvaslayout = readStorage("canvaslayout");
+  if (!canvaslayout) {
+    canvaslayout = "FB";
+  }
+  filter = "";
+  reflookup = "";
+  populateMetadata();
+  bomCheckboxes = readStorage("bomCheckboxes");
+  if (bomCheckboxes === null) {
+    bomCheckboxes = "Sourced,Placed";
+  }
+  document.getElementById("bomCheckboxes").value = bomCheckboxes;
+  if (readStorage("silkscreenVisible") === "false") {
+    document.getElementById("silkscreenCheckbox").checked = false;
+    silkscreenVisible(false);
+  }
+  if (readStorage("redrawOnDrag") === "false") {
+    document.getElementById("dragCheckbox").checked = false;
+    setRedrawOnDrag(false);
+  }
+  if (readStorage("darkmode") === "true") {
+    document.getElementById("darkmodeCheckbox").checked = true;
+    setDarkMode(true);
+  }
+  // Triggers render
+  changeBomLayout(bomlayout);
+}
+
+window.onresize = resizeAll;
+window.matchMedia("print").addListener(resizeAll);
+
+///////////////////////////////////////////////
+
+  </script>
+</head>
+
+<body>
+<div id="topmostdiv" style="width: 100%; height: 100%">
+  <div id="top">
+    <div style="float: right;">
+      <div class="hideonprint menu" style="float: right; margin: 10px; top: 8px;">
+        <button class="menubtn"></button>
+        <div class="menu-content">
+          <label class="menu-label menu-label-top">
+            <input id="darkmodeCheckbox" type="checkbox" onchange="setDarkMode(this.checked)">
+            Dark mode
+          </label>
+          <label class="menu-label">
+            <input id="silkscreenCheckbox" type="checkbox" checked onchange="silkscreenVisible(this.checked)">
+            Show silkscreen
+          </label>
+          <label class="menu-label">
+            <input id="dragCheckbox" type="checkbox" checked onchange="setRedrawOnDrag(this.checked)">
+            Continuous redraw on drag
+          </label>
+          <label class="menu-label">
+            <div style="margin-left: 5px">Bom checkboxes</div>
+            <input id="bomCheckboxes" class="menu-textbox" type=text
+                   oninput="setBomCheckboxes(this.value)">
+          </label>
+        </div>
+      </div>
+      <div class="button-container hideonprint"
+           style="float: right; margin: 10px; position: relative; top: 8px">
+        <button id="fl-btn" class="left-most-button" onclick="changeCanvasLayout('F')"
+                title="Front only">F
+        </button>
+        <button id="fb-btn" class="middle-button" onclick="changeCanvasLayout('FB')"
+                title="Front and Back">FB
+        </button>
+        <button id="bl-btn" class="right-most-button" onclick="changeCanvasLayout('B')"
+                title="Back only">B
+        </button>
+      </div>
+      <div class="button-container hideonprint"
+           style="float: right; margin: 10px; position: relative; top: 8px">
+        <button id="bom-btn" class="left-most-button" onclick="changeBomLayout('BOM')"
+                title="BOM only"></button>
+        <button id="lr-btn" class="middle-button" onclick="changeBomLayout('LR')"
+                title="BOM left, drawings right"></button>
+        <button id="tb-btn" class="right-most-button" onclick="changeBomLayout('TB')"
+                title="BOM top, drawings bot"></button>
+      </div>
+    </div>
+    <div id="fileinfodiv" style="overflow: auto;">
+      <table class="fileinfo">
+        <tbody>
+          <tr>
+            <td id="title" class="title" style="width: 70%">
+              Title
+            </td>
+            <td id="revision" class="title" style="width: 30%">
+              Revision
+            </td>
+          </tr>
+          <tr>
+            <td id="company">
+              Kicad version
+            </td>
+            <td id="filedate">
+              Date
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="bot" class="split" style="height: calc(100% - 80px)">
+    <div id="bomdiv" class="split split-horizontal">
+      <div style="width: 100%">
+        <input id="reflookup" class="searchbox reflookup hideonprint" type="text" placeholder="Ref lookup"
+               oninput="updateRefLookup(this.value)">
+        <input id="filter" class="searchbox filter hideonprint" type="text" placeholder="Filter"
+               oninput="updateFilter(this.value)">
+      </div>
+      <div id="dbg"></div>
+      <table class="bom">
+        <thead id="bomhead">
+        </thead>
+        <tbody id="bombody">
+        </tbody>
+      </table>
+    </div>
+    <div id="canvasdiv" class="split split-horizontal">
+      <div id="frontcanvas" class="split" style="overflow: hidden">
+        <div style="position: relative; width: 100%; height: 100%;">
+          <canvas id="F_bg" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+          <canvas id="F_slk" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+          <canvas id="F_hl" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
+        </div>
+      </div>
+      <div id="backcanvas" class="split" style="overflow: hidden">
+        <div style="position: relative; width: 100%; height: 100%;">
+          <canvas id="B_bg" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+          <canvas id="B_slk" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+          <canvas id="B_hl" style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>
