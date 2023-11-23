@@ -1,5 +1,7 @@
 ### Description
 
+![GitHub issues](https://img.shields.io/github/issues-raw/mafe72/piZero-USB-Hub?logo=Github&style=for-the-badge)
+
 A small 4 port USB hub for the Raspberry Pi Zero
 
 ### License
